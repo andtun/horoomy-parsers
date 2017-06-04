@@ -7,9 +7,9 @@
 	<script type="text/javascript">
 
 		function get(ourl) {
-			nurl = "/parse_status/" + ourl
+			var nurl = "/parse_status/" + ourl
 			var r = new XMLHttpRequest();
-			r.open('GET', ourl);
+			r.open('GET', nurl);
 			r.send();
 			return r.responseText;
 		}
