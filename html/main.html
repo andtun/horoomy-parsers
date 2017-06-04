@@ -10,19 +10,14 @@
 			var nurl = "/parse_status/" + ourl
 			var r = new XMLHttpRequest();
 			r.open('GET', nurl);
-			alert(nurl);
 			r.send();
-			var txt;
-			r.onreadystatechange=function() { if (r.readyState == 4) {txt = r.responseText}}
-			return txt;
+			r.onreadystatechange=function() { if (r.readyState == 4) {document.getElementById(ourl).innerHTML = r.responseText;}}
 		}
 		
 		function fill_status() {
 			parsers = ['cian', 'other'];
 			parsers.forEach(function(parser, i) {
-				status = get(parser);
-				alert(status)
-				document.getElementById(parser).innerHTML = status;
+				get(parser);
 			})
 		}
 
