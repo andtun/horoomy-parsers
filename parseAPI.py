@@ -26,7 +26,7 @@ def parse_cian():
 
     def write(d):
         d = str(d)
-        f = open("cian.json", 'w')
+        f = open("cian.txt", 'w')
         f.write(d)
         f.close()
 
