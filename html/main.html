@@ -12,7 +12,9 @@
 			r.open('GET', nurl);
 			alert(nurl);
 			r.send();
-			return r.responseText;
+			var txt;
+			r.onreadystatechange=function() { if (r.readyState == 4) {txt = r.responseText}}
+			return txt;
 		}
 		
 		function fill_status() {
