@@ -10,6 +10,7 @@
 			var nurl = "/parse_status/" + ourl
 			var r = new XMLHttpRequest();
 			r.open('GET', nurl);
+			alert(nurl);
 			r.send();
 			return r.responseText;
 		}
@@ -18,6 +19,7 @@
 			parsers = ['cian', 'other'];
 			parsers.forEach(function(parser, i) {
 				status = get(parser);
+				alert(status)
 				document.getElementById(parser).innerHTML = status;
 			})
 		}
