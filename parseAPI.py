@@ -53,6 +53,7 @@ def parse_cian():
     html = requests.get(url).text
     json_text = json.loads(html)
     infa = json_text["data"]["points"]
+    count = 0
     for i in infa:
         main = infa[i]
         offers = main["offers"]
@@ -65,7 +66,8 @@ def parse_cian():
             print("I'm still processing")
         url = link_template + flat_id
         print(url)
-        towrite = str(infa.index(i)) + "links processed"
+        count += 1
+        towrite = str(count) + "links processed"
         write(towrite)
         all_pics = getinf(url)
         x = {'room_num': room_num, 'metro': [], 'pics': all_pics,
