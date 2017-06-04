@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>hoROOMy parsers</title>
+
+	<script type="text/javascript">
+
+		function get(ourl) {
+			nurl = "/parse_status/" + ourl
+			var r = new XMLHttpRequest();
+			r.open('GET', ourl);
+			r.send();
+			return r.responseText;
+		}
+		
+		function fill_status() {
+			parsers = ['cian', 'other'];
+			parsers.forEach(function(parser, i) {
+				status = get(parser);
+				document.getElementById(parser).innerHTML = status;
+			})
+		}
+
+		window.onload = setInterval(fill_status, 1500);
+
+	</script>
+</head>
+<body>
+
+	<div>
+		<span style="margin-right: 20%; margin-left: 3%;">cian:</span><span id="cian" style="margin-right: 17%;">xtnf</span><a href="/res/cian">Просмотреть результаты</a>
+	</div>
+	<div style="margin-bottom: 10%">
+		<span style="margin-right: 20%; margin-left: 3%;">other:</span><span id="other">fff</span>
+	</div>
+	<form action="/start_parse" method="GET"> <input type="submit" value="Начать парсинг"> </form>
+
+</body>
+</html>

@@ -25,8 +25,11 @@ def parse_cian():
 
 
     def write(d):
+        
+
+    def final_write(d):
         d = str(d)
-        f = open("pres.txt", 'w')
+        f = open("cian_res.json", 'w')
         f.write(d)
         f.close()
         
@@ -35,9 +38,9 @@ def parse_cian():
 
     link_template = 'https://cian.ru/rent/flat/'
 
-    f = open("pres.txt", 'w')
-    f.write("Parsing right now, check your logs")
-    f.close()
+    #f = open("pres.txt", 'w')
+    #f.write("Parsing right now, check your logs")
+    #f.close()
 
     # { 'room_num': "", 'metro': [список с ближайшими станциями метро], 'pics': [список с фото квартиры],
     #  cost: "цена квартиры", floor: "этаж", phone: "телефон хозяина", furn: True/False, loc: [координаты],
@@ -59,11 +62,13 @@ def parse_cian():
             print("I'm still processing")
         url = link_template + flat_id
         print(url)
+        towrite = str(infa.index(i)) + "links processed"
+        write(towrite)
         all_pics = getinf(url)
         x = {'room_num': room_num, 'metro': [], 'pics': all_pics,
          "cost": price, "floor": floor, "phone": "телефон", "furn": None, "loc": i,
          "long": None, "agent": None, "link": url}
         all_infa.append(x)
-    write(all_infa)
+    final_write(all_infa)
     print("ALL INFA WRITTEN")
 
