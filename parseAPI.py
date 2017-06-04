@@ -35,7 +35,11 @@ def parse_cian():
         f = open("cian_res.json", 'w')
         f.write(d)
         f.close()
-        
+
+    def gettime():
+        from time import gmtime, strftime
+        res = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+        return res
 
     url = "https://map.cian.ru/ajax/map/roundabout/?currency=2&deal_type=rent&engine_version=2&maxprice=50000&offer_type=flat&region=1&room1=1&type=4"
 
@@ -67,7 +71,7 @@ def parse_cian():
         url = link_template + flat_id
         print(url)
         count += 1
-        towrite = str(count) + "links processed"
+        towrite = str(count) + " links processed"
         write(towrite)
         all_pics = getinf(url)
         x = {'room_num': room_num, 'metro': [], 'pics': all_pics,
@@ -75,5 +79,6 @@ def parse_cian():
          "long": None, "agent": None, "link": url}
         all_infa.append(x)
     final_write(all_infa)
+    write('last updated: ' + gettime())
     print("ALL INFA WRITTEN")
 
