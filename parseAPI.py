@@ -58,10 +58,10 @@ def cian():
             return all_images
 
 
+    MAXPRICE = "40000"
     url = "https://map.cian.ru/ajax/map/roundabout/?deal_type=rent&engine_version=2&offer_type=flat&region=1&room1=1&room2=1&room3=1&maxprice=" + MAXPRICE
     p = Parse("cian")
     link_template = 'https://cian.ru/rent/flat/'
-    MAXPRICE = "40000"
 
     #f = open("pres.txt", 'w')
     #f.write("Parsing right now, check your logs")
