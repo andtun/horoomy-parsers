@@ -6,9 +6,10 @@
 
 	<script type="text/javascript">
 
-	var b = document.getElementById("stp")
+
 
 		function get(ourl) {
+			var b = document.getElementById("stp")
 			var nurl = "/parse_status/" + ourl
 			var r = new XMLHttpRequest();
 			r.open('GET', nurl);
@@ -16,8 +17,8 @@
 			r.onreadystatechange=function() { if (r.readyState == 4) {
 				var resp = r.responseText;
 				document.getElementById(ourl).innerHTML = resp;
-				if (resp.indexOf("last updated on:") != -1) {b.disabled = false;}
-				else {b.disabled = true;}}}
+				if (resp.indexOf("last updated on:") != -1) {b.disabled = true;}
+				else {b.disabled = false;}}}
 		}
 		
 		function fill_status() {
