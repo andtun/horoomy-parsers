@@ -10,7 +10,7 @@ def main():
 
 @get("/start_parse")
 def st():
-    t = threading.Thread(target = parseAPI.parse_cian)
+    t = threading.Thread(target = parseAPI.cian)
     t.start()
     redirect("/")
 

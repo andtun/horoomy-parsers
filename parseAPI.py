@@ -3,10 +3,44 @@
 import requests
 import json
 from bs4 import BeautifulSoup
+from time import gmtime, strftime
 import time
 
 
-def parse_cian():
+class Parse:
+    name = ""
+    status_key = ""
+    results_file = ""
+
+
+    def __init__ (self, name):
+        self.name = name
+        self.status_file = name + "_st.txt"
+        self.results_file = name + "_res.json"
+
+
+    def save_results(self, results):
+        res = str(results)
+        f = open(self.results_file, 'w')
+        f.write(d.encode('utf-8'))
+        f.close()
+
+
+    def write_status(self, status):
+        f = open(self.status_file, 'w')
+        towrite = str(status) + " links processed"
+        f.write(towrite)
+        f.close()
+        
+
+    def add_date(self):
+        data = "last updated on: " + str(strftime("%Y-%m-%d %H:%M:%S", gmtime()))
+        f = open(self.status_file, 'w')
+        f.write(data)
+        f.close()
+                 
+        
+def cian():
     
     def getinf(url):
         all_images = []
@@ -24,25 +58,8 @@ def parse_cian():
             return all_images
 
 
-    def write(d):
-        d = str(d)
-        f = open("cian.txt", 'w')
-        f.write(d)
-        f.close()
-
-    def final_write(d):
-        d = str(d)
-        f = open("cian_res.json", 'w')
-        f.write(d)
-        f.close()
-
-    def gettime():
-        from time import gmtime, strftime
-        res = strftime("%Y-%m-%d %H:%M:%S", gmtime())
-        return res
-
-    url = "https://map.cian.ru/ajax/map/roundabout/?currency=2&deal_type=rent&engine_version=2&maxprice=50000&offer_type=flat&region=1&room1=1&type=4"
-
+    url = "https://map.cian.ru/ajax/map/roundabout/?deal_type=rent&engine_version=2&offer_type=flat&region=1&room1=1&room2=1&room3=1&type=4"
+    p = Parse("cian")
     link_template = 'https://cian.ru/rent/flat/'
 
     #f = open("pres.txt", 'w')
@@ -57,10 +74,12 @@ def parse_cian():
     html = requests.get(url).text
     json_text = json.loads(html)
     infa = json_text["data"]["points"]
+    
     count = 0
     for i in infa:
         main = infa[i]
         offers = main["offers"]
+        
         for j in offers:
             room_num = j['property_type']
             price = j['price_rur']
@@ -68,17 +87,20 @@ def parse_cian():
             floor = floor[floor.find(" ") + 1:]
             flat_id = j["id"]
             print("I'm still processing")
+            
         url = link_template + flat_id
+        all_pics = getinf(url)
+
         print(url)
         count += 1
-        towrite = str(count) + " links processed"
-        write(towrite)
-        all_pics = getinf(url)
+        p.write_status(count)
+        
         x = {'room_num': room_num, 'metro': [], 'pics': all_pics,
          "cost": price, "floor": floor, "phone": "телефон", "furn": None, "loc": i,
          "long": None, "agent": None, "link": url}
         all_infa.append(x)
-    final_write(all_infa)
-    write('last updated: ' + gettime())
+        
+    p.save_results(all_infa)
+    p.add_date()
     print("ALL INFA WRITTEN")
 
