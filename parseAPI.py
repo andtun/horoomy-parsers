@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from time import gmtime, strftime
 import time
 
-#MAXPRICE = "40000"
+# set minmax price !!!!
 
 class Parse:
     name = ""
