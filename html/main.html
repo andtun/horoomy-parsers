@@ -41,7 +41,7 @@
 	<div style="margin-bottom: 10%">
 		<span style="margin-right: 20%; margin-left: 3%;">other:</span><span id="other">fff</span>
 	</div>
-	<form action="/start_parse" method="GET">
+	<form action="/start_parse" onsubmit="document.getElementById('stp').disabled = true; await sleep(1000);" method="GET">
 	<input type="number" placeholder="Макс цена, руб" name="maxprice">
 	<input type="submit" id="stp" value="Начать парсинг" disabled>
 	</form>
