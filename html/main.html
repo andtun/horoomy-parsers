@@ -17,7 +17,8 @@
 			r.onreadystatechange=function() { if (r.readyState == 4) {
 				var resp = r.responseText;
 				document.getElementById(ourl).innerHTML = resp;
-				if (resp.indexOf("last updated on:") != -1) {document.getElementById("stp").disabled = true; console.log("disabled");}
+				console.log("resp")
+				if (resp.indexOf("last updated on:") == -1) {document.getElementById("stp").disabled = true; console.log("disabled");}
 				else {document.getElementById("stp").disabled = false; console.log("enabled");}}}
 		}
 		
