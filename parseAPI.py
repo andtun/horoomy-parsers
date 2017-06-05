@@ -41,7 +41,7 @@ class Parse:
         f.close()
                  
         
-def cian():
+def cian(maxprice):
     
     def getinf(url):
         all_images = []
@@ -59,7 +59,7 @@ def cian():
             return all_images
 
 
-    url = "https://map.cian.ru/ajax/map/roundabout/?deal_type=rent&engine_version=2&offer_type=flat&region=1&room1=1&room2=1&room3=1&maxprice=40000"
+    url = "https://map.cian.ru/ajax/map/roundabout/?deal_type=rent&engine_version=2&offer_type=flat&region=1&room1=1&room2=1&room3=1&maxprice=" + str(maxprice)
     p = Parse("cian")
     link_template = 'https://cian.ru/rent/flat/'
 

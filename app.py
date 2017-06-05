@@ -10,7 +10,8 @@ def main():
 
 @get("/start_parse")
 def st():
-    t = threading.Thread(target = parseAPI.cian)
+    maxprice = request.query.maxprice
+    t = threading.Thread(target = parseAPI.cian, args=(maxprice,))
     t.start()
     redirect("/")
 
