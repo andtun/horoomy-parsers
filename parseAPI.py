@@ -58,7 +58,7 @@ def cian():
             return all_images
 
 
-    url = "https://map.cian.ru/ajax/map/roundabout/?deal_type=rent&engine_version=2&offer_type=flat&region=1&room1=1&room2=1&room3=1&type=4"
+    url = "https://map.cian.ru/ajax/map/roundabout/?deal_type=rent&engine_version=2&offer_type=flat&region=1&room1=1&room2=1&room3=1"
     p = Parse("cian")
     link_template = 'https://cian.ru/rent/flat/'
 

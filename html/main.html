@@ -6,12 +6,18 @@
 
 	<script type="text/javascript">
 
+	var b = document.getElementById("stp")
+
 		function get(ourl) {
 			var nurl = "/parse_status/" + ourl
 			var r = new XMLHttpRequest();
 			r.open('GET', nurl);
 			r.send();
-			r.onreadystatechange=function() { if (r.readyState == 4) {document.getElementById(ourl).innerHTML = r.responseText;}}
+			r.onreadystatechange=function() { if (r.readyState == 4) {
+				var resp = r.responseText;
+				document.getElementById(ourl).innerHTML = resp;
+				if (resp.indexOf("last updated on:") != -1) {b.disabled = false;}
+				else {b.disabled = true;}}}
 		}
 		
 		function fill_status() {
@@ -28,12 +34,12 @@
 <body>
 
 	<div>
-		<span style="margin-right: 20%; margin-left: 3%;">cian:</span><span id="cian" style="margin-right: 17%;">xtnf</span><a href="/res/cian">Просмотреть результаты</a>
+		<span style="margin-right: 20%; margin-left: 3%;">cian:</span><span id="cian" style="margin-right: 17%;">xtnf</span><a href="/res/cian" id="reults">Просмотреть результаты</a>
 	</div>
 	<div style="margin-bottom: 10%">
 		<span style="margin-right: 20%; margin-left: 3%;">other:</span><span id="other">fff</span>
 	</div>
-	<form action="/start_parse" method="GET"> <input type="submit" value="Начать парсинг"> </form>
+	<form action="/start_parse" method="GET"> <input type="submit" id="stp" value="Начать парсинг" disabled> </form>
 
 </body>
 </html>
