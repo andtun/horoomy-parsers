@@ -21,7 +21,7 @@ def res(parser):
 
 @get("/parse_status/<parser>")
 def return_status(parser):
-    filename = parser + ".txt"
+    filename = parser + "_st.txt"
     return static_file(filename, root='.')
 
 
