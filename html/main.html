@@ -9,7 +9,7 @@
 
 
 		function get(ourl) {
-			var b = document.getElementById("stp")
+
 			var nurl = "/parse_status/" + ourl
 			var r = new XMLHttpRequest();
 			r.open('GET', nurl);
@@ -17,8 +17,8 @@
 			r.onreadystatechange=function() { if (r.readyState == 4) {
 				var resp = r.responseText;
 				document.getElementById(ourl).innerHTML = resp;
-				if (resp.indexOf("last updated on:") != -1) {b.disabled = true;}
-				else {b.disabled = false;}}}
+				if (resp.indexOf("last updated on:") != -1) {document.getElementById("stp").disabled = true;}
+				else {document.getElementById("stp").disabled = false;}}}
 		}
 		
 		function fill_status() {

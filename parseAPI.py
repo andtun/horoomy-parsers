@@ -20,9 +20,9 @@ class Parse:
 
 
     def save_results(self, results):
-        res = str(results)
+        res = results.encode('utf-8')
         f = open(self.results_file, 'w')
-        f.write(d.encode('utf-8'))
+        f.write(res)
         f.close()
 
 
@@ -58,9 +58,10 @@ def cian():
             return all_images
 
 
-    url = "https://map.cian.ru/ajax/map/roundabout/?deal_type=rent&engine_version=2&offer_type=flat&region=1&room1=1&room2=1&room3=1"
+    url = "https://map.cian.ru/ajax/map/roundabout/?deal_type=rent&engine_version=2&offer_type=flat&region=1&room1=1&room2=1&room3=1&maxprice=" + MAXPRICE
     p = Parse("cian")
     link_template = 'https://cian.ru/rent/flat/'
+    MAXPRICE = "40000"
 
     #f = open("pres.txt", 'w')
     #f.write("Parsing right now, check your logs")
@@ -101,6 +102,6 @@ def cian():
         all_infa.append(x)
         
     p.save_results(all_infa)
-    p.add_date()
     print("ALL INFA WRITTEN")
+    p.add_date()
 
