@@ -11,9 +11,7 @@ PARSER_LIST = ['cian', 'realEstate']
 def main_page():
     div = ""
     for p in PARSER_LIST:
-	div += """<div>
-	<span style="margin-right: 20%; margin-left: 3%;">{0}:</span><span id="{0}" style="margin-right: 17%;">xtnf</span><button onclick="window.location = '/res/{0}';">Просмотреть результаты</a>
-	</div>""".format(p)
+        div += """<div><span style="margin-right: 20%; margin-left: 3%;">{0}:</span><span id="{0}" style="margin-right: 17%;">xtnf</span><button onclick="window.location = '/res/{0}';">Просмотреть результаты</a></div>""".format(p)
     return template("./html/main.html", plist = str(PARSER_LIST), parserdivs = div)
 
 

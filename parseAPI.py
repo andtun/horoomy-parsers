@@ -94,46 +94,46 @@ def get_page_data(html):
     info = soup.find('section', class_='clear-fix').find('div', class_ = 'object-block').find('div', class_="object-info-block").find('div', class_='object-info')
 
 
-	#price
-	#try:
+    #price
+    #try:
     cost = soup.find('section', class_='clear-fix').find('div', class_ = 'object-block').find('div', class_="object-info-block").find('div', class_='object-price').text.split('/')[0][:-2]
     cost = cost.split()
     cost = int(''.join(cost))
-	#except:
-	#cost = '-'
+    #except:
+    #cost = '-'
 
-	#metro
+    #metro
     try:
-	metro = []
-	metro.append(info.find('div', class_='object-info-link_l1').find('a').text)
+        metro = []
+        metro.append(info.find('div', class_='object-info-link_l1').find('a').text)
     except:
-	metro = []
+        metro = []
 
-	#Address
-	# try:
+    #Address
+    # try:
     adr = ''
     elms = info.find('div', class_='object-info-link_l2').find_all('a')
     for elm in elms:
-	adr += elm.text + ' '
-# except:
-#	adr = '-'		
+        adr += elm.text + ' '
+    # except:
+#   adr = '-'       
 
-	#Created date
+    #Created date
     date = media.find('div', class_='obj-info-dop').text.split()[1][:-1]
-		#date = '-'
+        #date = '-'
 
 
-	#Rooms
+    #Rooms
     room_num = int(info.find('div', class_='object-params').find('div',class_='params-block').find_all('div', class_='params-item')[5].find('div',class_='float-right').text)
 
 
 
-	#Area
+    #Area
     area = int(info.find('div', class_='object-params').find('div',class_='params-block').find_all('div', class_='params-item')[6].find('div',class_='float-right').text.split()[0])
 
 
-	
-	#Description
+    
+    #Description
 
     descr = info.find('div', class_='object-description').find('div', class_='object-description-text').text
 
@@ -142,11 +142,10 @@ def get_page_data(html):
     elms = media.find('div', class_='object-photo').find('div', class_='other-photo-container').find_all('img', class_='other-photo')
     if elms:
         for elm in elms:
-	    pics.append(template + elm.get('src'))
+            pics.append(template + elm.get('src'))
 
 
-
-	#Contacts
+        #Contacts
 
     contacts = {'vk': "", 'fb': "", 'email': "", 'phone': ""}
     phone = media.find('div',class_='object-connect').find('div', class_='object-builder').find('div',class_='object-builder-phone_block').find('div', class_='object-builder-phone').text[:-3] + str(int(int(media.find('div', class_='obj-active-panel').find('div', class_='toogle-button').get('blst'))/17))[1:]
@@ -155,7 +154,7 @@ def get_page_data(html):
 
     return date, cost, descr, pics, room_num, area, adr, metro, contacts
 
-	#Location // Можно вытащить из названия объявления
+    #Location // Можно вытащить из названия объявления
 
 
 
@@ -179,27 +178,26 @@ def realestate(maxprice):
     out = []
 
     for currentPage in range(int(str(total_pages)[1:])):
-    	# if currentPage == 2:
-	# 	break	
-	page_url = page_url_template  + str(currentPage) + '/'
-	soup = BeautifulSoup(get_html(page_url), 'lxml')
-	ads = soup.find('section', class_='clear-fix').find_all('div', class_='contentblock')[1].find('div', class_='main-content').find('div', class_='list-panel').find_all('div', class_='obj')
-	for ad in ads:
+        # if currentPage == 2:
+        #   break
+        page_url = page_url_template  + str(currentPage) + '/'
+        soup = BeautifulSoup(get_html(page_url), 'lxml')
+        ads = soup.find('section', class_='clear-fix').find_all('div', class_='contentblock')[1].find('div', class_='main-content').find('div', class_='list-panel').find_all('div', class_='obj')
+        for ad in ads:
             url = template + ad.find('div', class_='obj-item').find('a').get('href')
             lat = ad.find('div', class_='obj-item').find('a', class_='obj-name house-Geoposition').get('lat') # Получаем широту и долготу
             lng = ad.find('div', class_='obj-item').find('a', class_='obj-name house-Geoposition').get('lng') # скрытые в названии объявления
             html = get_html(url)
             date, cost, descr, pics, room_num, area, adr, metro, contacts = get_page_data(html)
             data = {'date': date, 'cost': cost, 'descr': descr, 'pics':pics, 'room_num': room_num, 'area':area, 'adr':adr, 'metro': metro, 'url': url, 'loc': [lat,lng], 'contacts':contacts}
-			
+            
             if cost <= maxprice:
                 out.append(data)
 
             print('{0}% Current page: {1}'.format(int(currentPage/total_pages*100),currentPage))
-            p.write_status(currentPage)	
-			#time.sleep(3)
-
-	p.save_results(out)
+            p.write_status(currentPage)
+            #time.sleep(3)
+    p.save_results(out)
     p.add_date()
 
     return out
