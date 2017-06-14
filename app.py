@@ -1,18 +1,32 @@
 # This Python file uses the following encoding: utf-8
 
 import threading
-import parseAPI
+from parseAPI import parse_it
 from bottle import *
+
+
+PARSER_LIST = ['cian', 'realEstate']
+
+
+def main_page():
+	div = ""
+	for p in PARSER_LIST:
+		div += """<div>
+		<span style="margin-right: 20%; margin-left: 3%;">{0}:</span><span id="{0}" style="margin-right: 17%;">xtnf</span><button onclick="window.location = '/res/{0}';">Просмотреть результаты</a>
+	</div>""".format(p)
+	return template("./html/main.html", plist = str(PARSER_LIST), parserdivs = div)
+
 
 @get("/")
 def main():
-    return static_file("main.html", root='./html')
+    return main_page()
 
 @get("/start_parse")
 def st():
     maxprice = request.query.maxprice
-    t = threading.Thread(target = parseAPI.cian, args=(maxprice,))
-    t.start()
+    for parser_name in PARSER_LIST:
+    	t = threading.Thread(target = parse_it, args=(parser_name, maxprice,))
+    	t.start()
     redirect("/")
 
 @get("/res/<parser>")

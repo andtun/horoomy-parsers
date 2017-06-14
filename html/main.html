@@ -21,26 +21,28 @@
 				if (resp.indexOf("last updated on:") == -1) {document.getElementById("stp").disabled = true; console.log("disabled");}
 				else {document.getElementById("stp").disabled = false; console.log("enabled");}}}
 		}
+
 		
 		function fill_status() {
-			parsers = ['cian', 'other'];
+			parsers = {{plist}};
 			parsers.forEach(function(parser, i) {
 				get(parser);
 			})
 		}
 
+
 		window.onload = setInterval(fill_status, 1500);
+
 
 	</script>
 </head>
 <body>
 
-	<div>
-		<span style="margin-right: 20%; margin-left: 3%;">cian:</span><span id="cian" style="margin-right: 17%;">xtnf</span><button onclick="window.location = '/res/cian';" id="reults">Просмотреть результаты</a>
-	</div>
+{parserdivs}
+
 	<div style="margin-bottom: 10%">
-		<span style="margin-right: 20%; margin-left: 3%;">other:</span><span id="other">fff</span>
 	</div>
+
 	<form action="/start_parse" onsubmit="document.getElementById('stp').disabled = true; await sleep(1000);" method="GET">
 	<input type="number" placeholder="Макс цена, руб" name="maxprice">
 	<input type="submit" id="stp" value="Начать парсинг" disabled>

@@ -2,44 +2,14 @@
 
 import requests
 import json
+import time
 from bs4 import BeautifulSoup
 from time import gmtime, strftime
-import time
+from parser_class import Parse
 
 # set minmax price !!!!
 
-class Parse:
-    name = ""
-    status_key = ""
-    results_file = ""
 
-
-    def __init__ (self, name):
-        self.name = name
-        self.status_file = name + "_st.txt"
-        self.results_file = name + "_res.json"
-
-
-    def save_results(self, results):
-        res = results.encode('utf-8')
-        f = open(self.results_file, 'w')
-        f.write(res)
-        f.close()
-
-
-    def write_status(self, status):
-        f = open(self.status_file, 'w')
-        towrite = str(status) + " links processed"
-        f.write(towrite)
-        f.close()
-        
-
-    def add_date(self):
-        data = "last updated on: " + str(strftime("%Y-%m-%d %H:%M:%S", gmtime()))
-        f = open(self.status_file, 'w')
-        f.write(data)
-        f.close()
-                 
         
 def cian(maxprice):
     
@@ -103,5 +73,151 @@ def cian(maxprice):
         
     p.save_results(all_infa)
     print("ALL INFA WRITTEN")
+    p.add_date() #я не умею эту фигню писать
+
+
+# ===========================================================================================================
+
+
+
+def get_html(url):
+	r = requests.get(url)
+	print(str(r), end=' ')
+	return r.text
+
+
+def get_page_data(html):
+
+	soup = BeautifulSoup(html, 'lxml')
+
+	media = soup.find('section', class_='clear-fix').find('div', class_ = 'object-block').find('div', class_="object-info-block").find('div', class_='object-media')
+	info = soup.find('section', class_='clear-fix').find('div', class_ = 'object-block').find('div', class_="object-info-block").find('div', class_='object-info')
+
+
+	#price
+	#try:
+	cost = soup.find('section', class_='clear-fix').find('div', class_ = 'object-block').find('div', class_="object-info-block").find('div', class_='object-price').text.split('/')[0][:-2]
+	cost = cost.split()
+	cost = int(''.join(cost))
+	#except:
+	#cost = '-'
+
+	#metro
+	try:
+		metro = []
+		metro.append(info.find('div', class_='object-info-link_l1').find('a').text)
+	except:
+		metro = []
+
+	#Address
+	# try:
+	adr = ''
+	elms = info.find('div', class_='object-info-link_l2').find_all('a')
+	for elm in elms:
+		adr += elm.text + ' '
+# except:
+#	adr = '-'		
+
+	#Created date
+	date = media.find('div', class_='obj-info-dop').text.split()[1][:-1]
+		#date = '-'
+
+
+	#Rooms
+	room_num = int(info.find('div', class_='object-params').find('div',class_='params-block').find_all('div', class_='params-item')[5].find('div',class_='float-right').text)
+
+
+
+	#Area
+	area = int(info.find('div', class_='object-params').find('div',class_='params-block').find_all('div', class_='params-item')[6].find('div',class_='float-right').text.split()[0])
+
+
+	
+	#Description
+
+	descr = info.find('div', class_='object-description').find('div', class_='object-description-text').text
+
+	pics = []
+	template = 'http://www.realestate.ru'
+	elms = media.find('div', class_='object-photo').find('div', class_='other-photo-container').find_all('img', class_='other-photo')
+	if elms:
+		for elm in elms:
+			pics.append(template + elm.get('src'))
+
+
+
+	#Contacts
+
+	contacts = {'vk': "", 'fb': "", 'email': "", 'phone': ""}
+	phone = media.find('div',class_='object-connect').find('div', class_='object-builder').find('div',class_='object-builder-phone_block').find('div', class_='object-builder-phone').text[:-3] + str(int(int(media.find('div', class_='obj-active-panel').find('div', class_='toogle-button').get('blst'))/17))[1:]
+	contacts['phone'] = phone
+
+
+	return date, cost, descr, pics, room_num, area, adr, metro, contacts
+
+	#Location // Можно вытащить из названия объявления
+
+
+
+def get_total_pages(url):
+	soup = BeautifulSoup(get_html(url), 'lxml')
+	total_pages = soup.find('section', class_='clear-fix').find_all('div', class_='contentblock')[1].find('div', class_='main-content').find('div', class_='list-panel').find('div', class_='more-info').find_all('a')[-1].get('href').split('pg')[1][:-1]
+	return int(total_pages)
+
+
+
+
+def realestate(maxprice):
+
+        p = Parse("realEstate")
+        
+	currentPage = 1
+	template = 'http://www.realestate.ru'
+	page_url_template = 'http://www.realestate.ru/flatrent/pg'
+	page_url = page_url_template  + str(currentPage) + '/'
+	total_pages = get_total_pages(page_url)+1
+	out = []
+
+	for currentPage in range(int(str(total_pages)[1:])):
+		# if currentPage == 2:
+		# 	break	
+		page_url = page_url_template  + str(currentPage) + '/'
+		soup = BeautifulSoup(get_html(page_url), 'lxml')
+		ads = soup.find('section', class_='clear-fix').find_all('div', class_='contentblock')[1].find('div', class_='main-content').find('div', class_='list-panel').find_all('div', class_='obj')
+		for ad in ads:
+			url = template + ad.find('div', class_='obj-item').find('a').get('href')
+			lat = ad.find('div', class_='obj-item').find('a', class_='obj-name house-Geoposition').get('lat') # Получаем широту и долготу
+			lng = ad.find('div', class_='obj-item').find('a', class_='obj-name house-Geoposition').get('lng') # скрытые в названии объявления
+			html = get_html(url)
+			date, cost, descr, pics, room_num, area, adr, metro, contacts = get_page_data(html)
+			data = {'date': date, 'cost': cost, 'descr': descr, 'pics':pics, 'room_num': room_num, 'area':area, 'adr':adr, 'metro': metro, 'url': url, 'loc': [lat,lng], 'contacts':contacts}
+			
+            if cost <= maxprice:
+                out.append(data)
+			# with open('out.txt', 'w', encoding='utf-8') as out_file:
+			# 	out_file.write(str(out))
+			print('{0}% Current page: {1}'.format(int(currentPage/total_pages*100),currentPage))
+            p.write_status(currentPage)	
+			#time.sleep(3)
+
+	p.save_results(out)
     p.add_date()
 
+	return out
+
+			# with open('out.txt', 'w', encoding='utf-8') as out_file:
+			# 	out_file.write(str(out))		
+
+
+
+    #if __name__ == '__main__':
+	 #  out = realestate()	
+
+
+#===========================================OPTIMIZATION============================================#
+
+def parse_it(name, maxprice):
+    if name == 'cian':
+        cian(maxprice)
+    elif name == 'realEstate':
+        realestate(maxprice)
