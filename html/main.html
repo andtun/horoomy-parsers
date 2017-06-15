@@ -6,41 +6,58 @@
 
 	<script type="text/javascript">
 
+		var once = "OK"
 
 
-		function get(ourl) {
-
-			var nurl = "/parse_status/" + ourl
-			var r = new XMLHttpRequest();
-			r.open('GET', nurl);
-			r.send();
-			r.onreadystatechange=function() { if (r.readyState == 4) {
-				var resp = r.responseText;
-				document.getElementById(ourl).innerHTML = resp;
-				console.log("resp")
-				if (resp.indexOf("last updated on:") == -1) {document.getElementById("stp").disabled = true; console.log("disabled");}
-				else {document.getElementById("stp").disabled = false; console.log("enabled");}}}
-		}
-
-		
-		function fill_status() {
-			parsers = {{plist}};
-			parsers.forEach(function(parser, i) {
-				get(parser);
-			})
-		}
+			function get_parser_list() {
 
 
-		window.onload = setInterval(fill_status, 1500);
+					function get(ourl) {
+
+					var nurl = "/parse_status/" + ourl
+					var r = new XMLHttpRequest();
+					r.open('GET', nurl);
+					r.send();
+					r.onreadystatechange=function() { if (r.readyState == 4) {
+						var resp = r.responseText;
+												console.log(ourl)
+						console.log(resp)
+						document.getElementById(ourl).innerHTML = resp;
+						if (resp.indexOf("last updated on:") == -1) {document.getElementById("stp").disabled = true; console.log("disabled");}
+						else {document.getElementById("stp").disabled = false; console.log("enabled");}}}
+					}
+
+
+				var r = new XMLHttpRequest();
+				r.open('GET', '/plist');
+				r.send();
+				r.onreadystatechange=function()
+				{
+					if (r.readyState == 4) {
+						parsers = JSON.parse(r.responseText);
+						parsers.forEach(function(parser, i) {
+							var divs = document.getElementById("parserdivs");
+							if (once == "OK") {
+							divs.innerHTML = divs.innerHTML + `<div><span style="margin-right: 20%; margin-left: 3%; display: inline-block; width: 30px;">`+parser+`:</span><span id="`+parser+`" style="margin-right: 17%;">xtnf</span><button onclick="window.location = '/res/`+parser+`';">Просмотреть результаты</a></div>`;
+							 }
+
+						get(parser);
+						})
+						once = "BEEN"
+					}
+				}
+			}
+
+
+		window.onload = function(){get_parser_list(); setInterval(get_parser_list, 1500);}
 
 
 	</script>
 </head>
 <body>
 
-{parserdivs}
 
-	<div style="margin-bottom: 10%">
+	<div style="margin-bottom: 10%" id="parserdivs">
 	</div>
 
 	<form action="/start_parse" onsubmit="document.getElementById('stp').disabled = true; await sleep(1000);" method="GET">

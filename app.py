@@ -1,23 +1,17 @@
 # This Python file uses the following encoding: utf-8
 
 import threading
+import json
 from parseAPI import parse_it
 from bottle import *
 
 
-PARSER_LIST = ['cian', 'realEstate']
-
-
-def main_page():
-    div = ""
-    for p in PARSER_LIST:
-        div += """<div><span style="margin-right: 20%; margin-left: 3%;">{0}:</span><span id="{0}" style="margin-right: 17%;">xtnf</span><button onclick="window.location = '/res/{0}';">Просмотреть результаты</a></div>""".format(p)
-    return template("./html/main.html", plist = str(PARSER_LIST), parserdivs = div)
+PARSER_LIST = json.loads(open('parser_list.json', 'r').read())
 
 
 @get("/")
 def main():
-    return main_page()
+    return static_file("main.html", root="./html")
 
 @get("/start_parse")
 def st():              
@@ -36,6 +30,10 @@ def res(parser):
 def return_status(parser):
     filename = parser + "_st.txt"
     return static_file(filename, root='.')
+
+@get("/plist")
+def pl():
+    return json.dumps(PARSER_LIST)
 
 
 run(host="0.0.0.0", port=os.environ.get('PORT', 5000))
