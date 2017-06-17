@@ -4,6 +4,7 @@ import threading
 import json
 from parseAPI import parse_it
 from bottle import *
+from parser_class import Parse
 
 
 PARSER_LIST = json.loads(open('parser_list.json', 'r').read())
@@ -23,13 +24,13 @@ def st():
 
 @get("/res/<parser>")
 def res(parser):
-    filename = parser + "_res.json"
-    return static_file(filename, root='.')
+    filename = Parse(parser).results_file
+    return static_file(filename, root='', download=True)
 
 @get("/parse_status/<parser>")
 def return_status(parser):
-    filename = parser + "_st.txt"
-    return static_file(filename, root='.')
+    filename = Parse(parser).status_file
+    return static_file(filename, root='')
 
 @get("/plist")
 def pl():
