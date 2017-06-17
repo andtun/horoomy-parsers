@@ -211,3 +211,11 @@ def parse_it(name, maxprice):
         cian(maxprice)
     elif name == 'realEstate':
         realestate(maxprice)
+
+
+if __name__ == "__main__":
+    m = 50000
+    cian(m)
+    realEstate(m)
+    
+        
