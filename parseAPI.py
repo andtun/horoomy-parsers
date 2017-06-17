@@ -190,7 +190,7 @@ def realestate(maxprice):
             html = get_html(url)
             date, cost, descr, pics, room_num, area, adr, metro, contacts = get_page_data(html)
             data = {'date': date, 'cost': cost, 'descr': descr, 'pics':pics, 'room_num': room_num, 'area':area, 'adr':adr, 'metro': metro, 'url': url, 'loc': [lat,lng], 'contacts':contacts}
-            
+            print("!!!!!!COST IS", str(cost))
             if int(cost) <= int(maxprice):
                 out.append(data)
 
