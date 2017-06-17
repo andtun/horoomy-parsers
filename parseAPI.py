@@ -197,7 +197,8 @@ def realestate(maxprice):
             print('{0}% Current page: {1}'.format(int(currentPage/total_pages*100),currentPage))
             p.write_status(currentPage)
             #time.sleep(3)
-        p.save_results(out)
+            print(str(out))
+            p.save_results(out)
     p.add_date()
 
     #return out
@@ -211,11 +212,3 @@ def parse_it(name, maxprice):
         cian(maxprice)
     elif name == 'realEstate':
         realestate(maxprice)
-
-
-if __name__ == "__main__":
-    m = 50000
-    cian(m)
-    realEstate(m)
-    
-        
