@@ -172,7 +172,7 @@ def realestate(maxprice):
         
     currentPage = 1
     template = 'http://www.realestate.ru'
-    page_url_template = 'http://www.realestate.ru/flatrent/pg'
+    page_url_template = 'http://www.realestate.ru/flatrent/rcs10.1.2.3-prt%s/pg' % str(int(maxprice)//1000)
     page_url = page_url_template  + str(currentPage) + '/'
     total_pages = get_total_pages(page_url)+1
     out = []
@@ -190,10 +190,7 @@ def realestate(maxprice):
             html = get_html(url)
             date, cost, descr, pics, room_num, area, adr, metro, contacts = get_page_data(html)
             data = {'date': date, 'cost': cost, 'descr': descr, 'pics':pics, 'room_num': room_num, 'area':area, 'adr':adr, 'metro': metro, 'url': url, 'loc': [lat,lng], 'contacts':contacts}
-            print("!!!!!!COST IS", str(cost))
-            if int(cost) <= int(maxprice):
-                out.append(data)
-
+            out.append(data)
             print('{0}% Current page: {1}'.format(int(currentPage/total_pages*100),currentPage))
             p.write_status(currentPage)
             #time.sleep(3)
