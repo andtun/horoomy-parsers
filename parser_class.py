@@ -30,7 +30,7 @@ class Parse:
 
     def save_results(self, results):
         res = json.dumps(results)
-        f = open(self.results_file, 'w', encoding='utf-8')
+        f = open(self.results_file, 'a', encoding='utf-8')
         f.write(res)
         f.close()
 
