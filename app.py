@@ -5,6 +5,7 @@ import json
 from parseAPI import parse_it
 from bottle import *
 from parser_class import Parse
+from database import DataBase
 
 
 PARSER_LIST = json.loads(open('parser_list.json', 'r').read())
@@ -24,8 +25,8 @@ def st():
 
 @get("/res/<parser>")
 def res(parser):
-    p = Parse(parser).db
-    return p.fetch("SELECT * FROM Results WHERE fromwhere = %s;" % p.name)
+    p = DataBase('parseRes.db')
+    return p.fetch("SELECT * FROM Results WHERE fromwhere = %s;" % parser)
 
 @get("/parse_status/<parser>")
 def return_status(parser):
