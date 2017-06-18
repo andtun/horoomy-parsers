@@ -6,20 +6,26 @@ from database import DataBase
 
 # when we start app.py
 db = DataBase('parseRes.db')
-db.format()
+try:
+    db.format()
+except:
+    print("db already formatted")
 print("!!!db created!!!")
+del db
 
 
 class Parse:
     name = ""
     status_key = ""
     results_file = ""
+    db = None
 
 
     def __init__ (self, name):
         self.name = name
         self.status_file = "./statuses/" + name + ".txt"
         self.results_file = "./results/" + name + ".json"
+        self.db = DataBase('parseRes.db')
 
 
     def save_results(self, results):
@@ -78,7 +84,7 @@ NULL,
 );
 """ % (data['cost'], data['room_num'], data['area'], data['contacts']['phone'], data['date'], 'NULL', json.dumps(data), self.name)
 
-        db.query(cmnd)
+        self.db.query(cmnd)
 
 
 
