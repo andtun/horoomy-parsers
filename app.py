@@ -24,8 +24,8 @@ def st():
 
 @get("/res/<parser>")
 def res(parser):
-    filename = Parse(parser).results_file
-    return static_file(filename, root='', download=True)
+    p = Parse(parser).db
+    return p.fetch("SELECT * FROM Results WHERE fromwhere = %s;" % p.name)
 
 @get("/parse_status/<parser>")
 def return_status(parser):

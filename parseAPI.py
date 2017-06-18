@@ -69,9 +69,8 @@ def cian(maxprice):
         x = {'room_num': room_num, 'metro': [], 'pics': all_pics,
          "cost": price, "floor": floor, "phone": "телефон", "furn": None, "loc": i,
          "long": None, "agent": None, "link": url}
-        all_infa.append(x)
+        p.append(x)
         
-    p.save_results(all_infa)
     print("ALL INFA WRITTEN")
     p.add_date() #я не умею эту фигню писать
 
