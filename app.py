@@ -26,7 +26,7 @@ def st():
 @get("/res/<parser>")
 def res(parser):
     p = DataBase('parseRes.db')
-    return p.fetch("SELECT * FROM Results WHERE fromwhere = '%s';" % parser)
+    return str(p.fetch("SELECT * FROM Results WHERE fromwhere = '%s';" % parser))
 
 @get("/parse_status/<parser>")
 def return_status(parser):
