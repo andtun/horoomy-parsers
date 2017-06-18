@@ -26,7 +26,7 @@ def st():
 @get("/res/<parser>")
 def res(parser):
     p = DataBase('parseRes.db')
-    return p.fetch("SELECT * FROM Results WHERE fromwhere = %s;" % parser)
+    return p.fetch("SELECT * FROM Results WHERE fromwhere = '%s';" % parser)
 
 @get("/parse_status/<parser>")
 def return_status(parser):
@@ -40,6 +40,10 @@ def pl():
 @get("/db")
 def db():
     return static_file("parseRes.db", root='.', download=True)
+
+@get("/cn")
+def cn():
+    return static_file("cian.json", root='./results')
 
 
 run(host="0.0.0.0", port=os.environ.get('PORT', 5000))
