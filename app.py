@@ -36,5 +36,9 @@ def return_status(parser):
 def pl():
     return json.dumps(PARSER_LIST)
 
+@get("/db")
+def db():
+    return static_file("parseRes.db", root='.', download=True)
+
 
 run(host="0.0.0.0", port=os.environ.get('PORT', 5000))

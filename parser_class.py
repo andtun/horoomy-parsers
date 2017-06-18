@@ -1,6 +1,13 @@
 # This Python file uses the following encoding: utf-8
 
 import json
+import requests
+from database import DataBase
+
+# when we start app.py
+db = DataBase('parseRes.db')
+db.format()
+print("!!!db created!!!")
 
 
 class Parse:
@@ -34,3 +41,63 @@ class Parse:
         f = open(self.status_file, 'w', encoding='utf-8')
         f.write(data)
         f.close()
+
+
+    def append(self, data):       # working with db
+
+        def get_loc(adr):
+            api_adr = adr.replace(' ', '+')
+            url = "https://geocode-maps.yandex.ru/1.x/?geocode=%s&format=json&results=1" % api_adr
+            loc = requests.get(url).text
+            loc = json.loads(loc)
+            return loc['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']["Point"]['pos']
+
+        def get_adr(loc):
+            url = "https://geocode-maps.yandex.ru/1.x/?geocode=%s&format=json&results=1" % loc
+            adr = requests.get(url).text
+            adr = json.loads(adr)
+            return adr['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['metaDataProperty']['GeocoderMetaData']['Address']['formatted']
+
+        if "adr" in data and "loc" not in data:
+            data["loc"] = get_loc(data["adr"])
+
+        elif "loc" in data and "adr" not in data:
+            data["adr"] = get_adr(data["loc"])
+        
+        cmnd = """
+INSERT INTO Results VALUES (
+NULL,
+%s,
+%s,
+%s,
+'%s',
+'%s',
+'%s',
+'%s',
+'%s'
+);
+""" % (data['cost'], data['room_num'], data['area'], data['contacts']['phone'], data['date'], 'NULL', json.dumps(data), self.name)
+
+        db.query(cmnd)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
