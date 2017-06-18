@@ -224,7 +224,7 @@ def realestate(maxprice):
             data = {'date': date, 'cost': cost, 'descr': descr, 'pics':pics, 'room_num': room_num, 'area':area, 'adr':adr, 'metro': metro, 'url': url, 'loc': loc, 'contacts':contacts}
             p.append(data)
             p.write_status(currentPage)
-            print('{0}% Current page: {1}'.format(int(currentPage/total_pages*100),currentPage))
+            print('Current page: {0}'.format(currentPage)
     p.add_date()
 
 #===========================================OPTIMIZATION============================================#
