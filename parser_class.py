@@ -65,10 +65,18 @@ class Parse:
             return adr['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['metaDataProperty']['GeocoderMetaData']['Address']['formatted']
 
         if "adr" in data and "loc" not in data:
-            data["loc"] = get_loc(data["adr"])
+            try:
+                data["loc"] = get_loc(data["adr"])
+            except:
+                data['loc'] = "YANDEXLOCERR"
+                print('YANDEXLOCERR')
 
         elif "loc" in data and "adr" not in data:
-            data["adr"] = get_adr(data["loc"])
+            try:
+                data["adr"] = get_adr(data["loc"])
+            except:
+                data['adr'] = 'YANDEXADRERR'
+                print("YANDEXADRERR")
         
         cmnd = """
 INSERT INTO Results VALUES (

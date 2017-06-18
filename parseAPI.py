@@ -67,7 +67,7 @@ def cian(maxprice):
         p.write_status(count)
         
         x = {'room_num': room_num, 'metro': [], 'pics': all_pics,
-         "cost": price, "floor": floor, "phone": "телефон", "furn": None, "loc": i,
+         "cost": price, "floor": floor, "phone": "телефон", "furn": None, "loc": i.replace(' ', ','),
          "long": None, "agent": None, "link": url}
         p.append(x)
         
