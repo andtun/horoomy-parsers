@@ -10,6 +10,11 @@ from database import DataBase
 
 PARSER_LIST = json.loads(open('parser_list.json', 'r').read())
 
+# creating all status files
+for p in PARSER_LIST:
+    filename = "./statuses/"+p+".txt"
+    open(filename, 'w').close()
+
 
 @get("/")
 def main():
