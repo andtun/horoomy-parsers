@@ -104,6 +104,7 @@ def realestate(maxprice):
         try:
             metro = []
             metro.append(info.find('div', class_='object-info-link_l1').find('a').text)
+
         except:
             metro = []
 
@@ -218,9 +219,10 @@ def realestate(maxprice):
                 url = template + ad.find('div', class_='obj-item').find('a').get('href')
                 #lat = ad.find('div', class_='obj-item').find('a', class_='obj-name house-Geoposition').get('lat') # Получаем широту и долготу
                 #lng = ad.find('div', class_='obj-item').find('a', class_='obj-name house-Geoposition').get('lng') # скрытые в названии объявления
+                adr = ad.find('div', class_='obj-item').find('a', class_='obj-name house-Geoposition').text
                 html = get_html(url)
                 print(url)
-                date, cost, descr, pics, room_num, area, adr, metro, contacts, loc = get_page_data(html)
+                date, cost, descr, pics, room_num, area, adr2, metro, contacts, loc = get_page_data(html)
                 data = {'date': date, 'cost': cost, 'descr': descr, 'pics':pics, 'room_num': room_num, 'area':area, 'adr':adr, 'metro': metro, 'url': url, 'loc': loc, 'contacts':contacts}
                 p.append(data)
                 #print(data)
@@ -265,12 +267,17 @@ def kvartirant(maxprice):
         prepay = base.find('div', class_='col-xs-12 obj-info').find_all('span')[1].text
         if 'Предоплата' in prepay or 'Новостройка' in prepay:
             offset = 1
+            temp = base.find('div', class_='col-xs-12 obj-info').find_all('span')[2].text
+	    if 'Предоплата' in temp or 'Новостройка' in temp:
+                offset = 2
         else:
             offset = 0
 
         #Metro
         try:
-            metro = base.find('div', class_='col-xs-12 obj-info').find_all('span')[2+offset].text.replace('\u2022','').split()[1:]
+            metro = base.find('div', class_='col-xs-12 obj-info').find_all('span')[2+offset].text.split('\u2022')#.replace('\u2022','').split()[1:]
+            metro[0] = ' '.join(metro[0].split()[1:])
+            print(metro)
         except: 
             metro = []  
 
@@ -303,8 +310,10 @@ def kvartirant(maxprice):
 
 
         #Area
-        area = int(base.find('div', class_='col-xs-12 obj-info').find_all('span')[1+offset].text.split()[1])
-
+        try:
+            area = int(base.find('div', class_='col-xs-12 obj-info').find_all('span')[1+offset].text.split()[1])
+        except:
+            area = "not given"
 
         #Adr
         adr = base.find('div', class_='col-xs-12 obj-info').find_all('span')[4+offset if metro else 3+offset].text.split()[1:]

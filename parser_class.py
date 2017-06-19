@@ -56,22 +56,24 @@ class Parse:
             url = "https://geocode-maps.yandex.ru/1.x/?geocode=%s&format=json&results=1" % api_adr
             loc = requests.get(url).text
             loc = json.loads(loc)
+            print("!!!GET_LOC USED!!!")
             return loc['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']["Point"]['pos']
 
         def get_adr(loc):
             url = "https://geocode-maps.yandex.ru/1.x/?geocode=%s&format=json&results=1" % loc
             adr = requests.get(url).text
             adr = json.loads(adr)
+            print("!!!GET_ADR USED!!!")
             return adr['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['metaDataProperty']['GeocoderMetaData']['Address']['formatted']
 
-        if "adr" in data and "loc" not in data:
+        if ("adr" in data and "loc" not in data) or (data['loc'] == []) or (data['loc'] == ""):
             try:
                 data["loc"] = get_loc(data["adr"])
             except:
                 data['loc'] = "YANDEXLOCERR"
                 print('YANDEXLOCERR')
 
-        elif "loc" in data and "adr" not in data:
+        elif ("loc" in data and "adr" not in data) or (data['adr'] == ""):
             try:
                 data["adr"] = get_adr(data["loc"])
             except:
@@ -96,7 +98,7 @@ NULL,
 '%s',
 '%s'
 );
-""" % (data['cost'], data['room_num'], data['area'], data['contacts']['phone'], data['date'], 'NULL', json.dumps(data['pics']), json.dumps(data['contacts']), data['descr'], data['adr'], json.dumps(data['metro']), data['url'], json.dumps(data['loc']), self.name)
+""" % (data['cost'], data['room_num'], data['area'], data['contacts']['phone'], data['date'], 'NULL', json.dumps(data['pics'], ensure_ascii=False), json.dumps(data['contacts'], ensure_ascii=False), data['descr'], data['adr'], json.dumps(data['metro'], ensure_ascii=False), data['url'], json.dumps(data['loc']), self.name)
         # print(cmnd)
         self.db.query(cmnd)
 
