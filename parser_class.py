@@ -93,7 +93,7 @@ NULL,
 '%s',
 '%s',
 "%s",
-'%s',
+'%s'
 );
 """ % (data['cost'], data['room_num'], data['area'], data['contacts']['phone'], data['date'], 'NULL', json.dumps(data['pics']), json.dumps(data['contacts']), data['descr'], data['adr'], json.dumps(data['metro']), data['url'], json.dumps(data['loc']))
         print(cmnd)
