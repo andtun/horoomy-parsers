@@ -268,7 +268,7 @@ def kvartirant(maxprice):
         if 'Предоплата' in prepay or 'Новостройка' in prepay:
             offset = 1
             temp = base.find('div', class_='col-xs-12 obj-info').find_all('span')[2].text
-	    if 'Предоплата' in temp or 'Новостройка' in temp:
+            if 'Предоплата' in temp or 'Новостройка' in temp:
                 offset = 2
         else:
             offset = 0
