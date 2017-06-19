@@ -390,7 +390,7 @@ def kvartirant(maxprice):
         p.add_date()
 
     # run
-    kvartir(maxprice)
+    kvartir(int(maxprice))
 
     
 #===========================================OPTIMIZATION============================================#
