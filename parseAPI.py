@@ -377,6 +377,7 @@ def kvartirant(maxprice):
                 for ad in ads:
                     url = ad.find('span', class_='red').find('b').find('a').get('href')
                     page_data = get_page_data(get_html(template + url), template+url, maxprice)
+                    page_data['url'] = template + url
                     print(template+url)
                     if page_data:
                         counter += 1
