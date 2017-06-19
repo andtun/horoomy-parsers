@@ -313,7 +313,7 @@ def kvartirant(maxprice):
         try:
             area = int(base.find('div', class_='col-xs-12 obj-info').find_all('span')[1+offset].text.split()[1])
         except:
-            area = "not given"
+            area = 0
 
         #Adr
         adr = base.find('div', class_='col-xs-12 obj-info').find_all('span')[4+offset if metro else 3+offset].text.split()[1:]
