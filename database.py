@@ -38,8 +38,14 @@ area INTEGER,
 phone TEXT,
 date TEXT,
 places TEXT,
-json TEXT,
-fromwhere TEXT
+floor TEXT,
+pics TEXT,
+contacts TEXT,
+descr TEXT,
+adr TEXT,
+metro TEXT,
+prooflink TEXT,
+loc TEXT
 );
 """
         self.query(cmnd)
