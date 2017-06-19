@@ -87,11 +87,11 @@ NULL,
 '%s',
 '%s',
 '%s',
-'%s',
+%s,
 '%s'
 );
-""" % (data['cost'], data['room_num'], data['area'], data['contacts']['phone'], data['date'], 'NULL', json.dumps(data), self.name)
-
+""" % (data['cost'], data['room_num'], data['area'], data['contacts']['phone'], data['date'], 'NULL', json.dumps(data, ensure_ascii=False).encode('utf-8'), self.name)
+        print(cmnd)
         self.db.query(cmnd)
 
 

@@ -28,6 +28,7 @@ class DataBase:
 
 
     def format(self):
+        # places - places of interest
         cmnd = """
 CREATE TABLE Results (
 num INTEGER PRIMARY KEY,

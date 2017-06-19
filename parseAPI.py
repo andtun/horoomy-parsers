@@ -222,6 +222,7 @@ def realestate(maxprice):
             date, cost, descr, pics, room_num, area, adr, metro, contacts, loc = get_page_data(html)
             data = {'date': date, 'cost': cost, 'descr': descr, 'pics':pics, 'room_num': room_num, 'area':area, 'adr':adr, 'metro': metro, 'url': url, 'loc': loc, 'contacts':contacts}
             p.append(data)
+            #print(data)
             p.write_status(currentPage)
             print('Current page: %s' % currentPage)
 
