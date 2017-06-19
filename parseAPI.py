@@ -3,6 +3,7 @@
 import requests
 import json
 import time
+import datetime
 from bs4 import BeautifulSoup
 from time import gmtime, strftime
 from parser_class import Parse
