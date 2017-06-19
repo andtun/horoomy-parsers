@@ -28,7 +28,7 @@ def res(parser):
     p = DataBase('parseRes.db')
     res = p.fetch("SELECT * FROM Results WHERE fromwhere = '%s';" % parser)
     del p
-    return str(res).encode('unicode_escape')
+    return str(res)
 
 @get("/parse_status/<parser>")
 def return_status(parser):
