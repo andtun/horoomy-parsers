@@ -94,9 +94,8 @@ NULL,
 '%s',
 '%s',
 '%s',
-'%s'
 );
-""" % (data['cost'], data['room_num'], data['area'], data['contacts']['phone'], data['date'], 'NULL', data['floor'], data['pics'], json.dumps(data['contacts']), data['descr'].encode('utf-8'), data['adr'], json.dumps(data['metro']), data['url'], data['loc'])
+""" % (data['cost'], data['room_num'], data['area'], data['contacts']['phone'], data['date'], 'NULL', data['pics'], json.dumps(data['contacts']), data['descr'].encode('utf-8'), data['adr'], json.dumps(data['metro']), data['url'], data['loc'])
         print(cmnd)
         self.db.query(cmnd)
 
