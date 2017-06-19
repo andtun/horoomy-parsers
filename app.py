@@ -26,7 +26,7 @@ def st():
 @get("/res/<parser>")
 def res(parser):
     p = DataBase('parseRes.db')
-    res = p.fetch("SELECT json FROM Results WHERE fromwhere = '%s';" % parser)
+    res = p.fetch("SELECT * FROM Results WHERE fromwhere = '%s';" % parser)
     del p
     return str(res).encode('unicode_escape')
 
