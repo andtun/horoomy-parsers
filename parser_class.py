@@ -3,6 +3,7 @@
 import json
 import requests
 from database import DataBase
+from time import gmtime, strftime
 
 # when we start app.py
 db = DataBase('parseRes.db')

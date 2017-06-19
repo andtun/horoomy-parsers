@@ -160,13 +160,16 @@ def realestate(maxprice):
         #Contacts
 
         contacts = {'vk': "", 'fb': "", 'email': "", 'phone': ""}
-        add = int(media.find('div', class_='obj-active-panel').find('div', class_='toogle-button').get('blst'))
-        if add == 0:
-            add = int(media.find('div', class_='obj-active-panel').find('div', class_='toogle-button').get('lst1'))
-        add = str(add//17)[1:]  
-        phone = media.find('div',class_='object-connect').find('div',class_='object-builder-phone_block').find('div', class_='object-builder-phone').text[:-3] + add
-        print(phone)
-        contacts['phone'] = phone
+        try:
+            add = int(media.find('div', class_='obj-active-panel').find('div', class_='toogle-button').get('blst'))
+            if add == 0:
+                add = int(media.find('div', class_='obj-active-panel').find('div', class_='toogle-button').get('lst1'))
+            add = str(add//17)[1:]  
+            phone = media.find('div',class_='object-connect').find('div',class_='object-builder-phone_block').find('div', class_='object-builder-phone').text[:-3] + add
+            print(phone)
+            contacts['phone'] = phone
+        except:
+            contacts['phone'] = 'err'
 
 
         #loc
@@ -372,7 +375,7 @@ def kvartirant(maxprice):
     def kvartir (maxprice):
         counter = 0
         p = Parse('kvartirant')
-        base_url = 'http://www.kvartirant.ru/bez_posrednikov/Moskva/sniat-kvartiru/'
+        base_url = 'http://www.kvartirant.ru/bez_posrednikov/Moskva/sniat-kvartiru/?cost_limit=%s&komnat[]=1&komnat[]=2&komnat[]=3' % int(maxprice)
         template = 'http://www.kvartirant.ru'
         html = get_html(base_url)
         # out = []
