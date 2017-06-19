@@ -335,7 +335,7 @@ def kvartirant(maxprice):
             loc = temp[start:start+i-1].split()
 
 
-        data = {"cost": cost, "date": date, "contacts": contacts, "pics": pics, "descr": descr, "adr": adr, "loc": loc, "metro": metro, "area": area, "room_num": room_num, "prooflink": url}
+        data = {"cost": cost, "url": url, "date": date, "contacts": contacts, "pics": pics, "descr": descr, "adr": adr, "loc": loc, "metro": metro, "area": area, "room_num": room_num, "prooflink": url}
         return data
 
 
@@ -377,8 +377,7 @@ def kvartirant(maxprice):
                 for ad in ads:
                     url = ad.find('span', class_='red').find('b').find('a').get('href')
                     page_data = get_page_data(get_html(template + url), template+url, maxprice)
-                    page_data['url'] = template + url
-                    print(template+url)
+                    print(page_data['url'])
                     if page_data:
                         counter += 1
                         p.append(page_data)
