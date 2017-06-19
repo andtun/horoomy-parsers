@@ -44,7 +44,8 @@ descr TEXT,
 adr TEXT,
 metro TEXT,
 prooflink TEXT,
-loc TEXT
+loc TEXT,
+fromwhere TEXT
 );
 """
         self.query(cmnd)
