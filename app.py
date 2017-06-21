@@ -24,6 +24,7 @@ def main():
 def st():              
     maxprice = request.query.maxprice
     for parser_name in PARSER_LIST:
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", parser_name)
     	t = threading.Thread(target = parse_it, args=(parser_name, maxprice,))
     	t.start()
     redirect("/")
