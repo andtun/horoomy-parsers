@@ -58,7 +58,10 @@ class Parse:
             loc = requests.get(url).text
             loc = json.loads(loc)
             print("!!!GET_LOC USED!!!")
-            return loc['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']["Point"]['pos']
+            loc = loc['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']["Point"]['pos']
+            loc = list(loc.split(" "))
+            loc = loc[1] + "," + loc[0]
+            return loc
 
         def get_adr(loc):
             url = "https://geocode-maps.yandex.ru/1.x/?geocode=%s&format=json&results=1" % loc
@@ -67,6 +70,12 @@ class Parse:
             print("!!!GET_ADR USED!!!")
             return adr['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['metaDataProperty']['GeocoderMetaData']['Address']['formatted']
 
+
+
+    #  SET CHECK IF THE FLAT ALREADY EXISTS
+
+
+    # getting loc and adr
         if ("adr" in data and "loc" not in data) or (data['loc'] == []) or (data['loc'] == ""):
             try:
                 data["loc"] = get_loc(data["adr"])
@@ -99,7 +108,7 @@ NULL,
 '%s',
 '%s'
 );
-""" % (data['cost'], data['room_num'], data['area'], data['contacts']['phone'], data['date'], 'NULL', json.dumps(data['pics'], ensure_ascii=False), json.dumps(data['contacts'], ensure_ascii=False), data['descr'], data['adr'], json.dumps(data['metro'], ensure_ascii=False), data['url'], json.dumps(data['loc']), self.name)
+""" % (data['cost'], data['room_num'], data['area'], data['contacts']['phone'].replace("+7", "").replace(" ","").replace("-","").replace("(","").replace(")",""), data['date'], 'NULL', json.dumps(data['pics'], ensure_ascii=False), json.dumps(data['contacts'], ensure_ascii=False), data['descr'], data['adr'], json.dumps(data['metro'], ensure_ascii=False), data['url'], json.dumps(data['loc']), self.name)
         # print(cmnd)
         self.db.query(cmnd)
         print("\n\n-----ONE MORE WITH "+self.name+"-----\n\n")

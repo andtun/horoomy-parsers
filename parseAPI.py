@@ -1,5 +1,6 @@
 # This Python file uses the following encoding: utf-8
 
+import re
 import requests
 import json
 import time
@@ -7,6 +8,7 @@ import datetime
 from bs4 import BeautifulSoup
 from time import gmtime, strftime
 from parser_class import Parse
+from datetime import datetime, timedelta
 
 # set minmax price !!!!
 
@@ -174,20 +176,7 @@ def realestate(maxprice):
 
         #loc
 
-        headers = {
-            'Referer': 'http://www.realestate.ru/flatrent/4320916/',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
-        }
-
-        response = requests.get('http://www.realestate.ru/scripts/common/ymaps.js', headers=headers).text
-        start = response.find("center:") + 9
-        ch = ''
-        i = 0
-        while ch != ']':
-            ch = response[start+i]
-            i += 1
-        end = start + i -1
-        loc = response[start:end].split(',')
+        loc = []
 
         return date, cost, descr, pics, room_num, area, adr, metro, contacts, loc
 
@@ -207,7 +196,7 @@ def realestate(maxprice):
         p = Parse('realEstate')
         currentPage = 1
         template = 'http://www.realestate.ru'
-        page_url_template = 'http://www.realestate.ru/flatrent/s/rcs10.1.2.3-prt{0}/pg'.format(int(maxprice)//1000)#'http://www.realestate.ru/flatrent/pg'
+        page_url_template = 'http://www.realestate.ru/flatrent/s/rcs10.1.2.3-rgs1.2.3.4.5.6.7.8.9.10-prt{0}/pg'.format(int(maxprice)//1000)#'http://www.realestate.ru/flatrent/pg'
         page_url = page_url_template  + str(currentPage) + '/'
         total_pages = get_total_pages(page_url)+1
         out = []
@@ -448,6 +437,125 @@ def kvartirant(maxprice):
         # run
     kvartir(int(maxprice))
 
+
+#===================================================================================================#
+
+
+def parse_rentookiru(maxprice):
+
+    # offers = []
+    p = Parse('rentooki')
+    # Iterate page indexes
+    page_index = 1
+    while True:
+        # Get page
+        offers_page_html = requests.get("http://rentooki.ru/moscow/?page={0}".format(page_index)).text
+        offers_page = BeautifulSoup(offers_page_html, "lxml")
+
+        # Extract offer links
+        links = offers_page.find_all("a", class_="pull-left relative", href=True)
+        links = [x["href"] for x in links]
+
+        # Exit on end
+        if "Следующая" not in offers_page_html:
+            break
+
+        for link in links:
+            try:
+
+                # Get offer page
+                offer_page = BeautifulSoup(requests.get("http://rentooki.ru{0}".format(link)).text, "lxml")
+
+                # Extract title info
+                title = offer_page.find("h2").contents[0]
+                title = " ".join(title.split())
+
+                # Split title to fields
+                try:
+                    offer_type_field, area_field, floor_field = title.split(",")
+                except:
+                    continue
+
+                # Skip rooms
+                # if offer_type_field.startswith("Сдам комнату"):
+                #    continue
+
+                # Placement date
+                datetime_field = offer_page.find("small").contents[0].replace("Размещено", "").strip()
+                try:
+                    dt = datetime.strptime(datetime_field, "%d %b %H:%M")
+                    dt = dt.replace(year=datetime.now().year)
+                    print(dt)
+                except:
+                    if "cегодня" in datetime_field:
+                        datetime_field = re.match(r".+ (\d+:\d+)", datetime_field).group(1)
+                        dt = datetime.strptime(datetime_field, "%H:%M")
+                        dt = datetime.now().replace(hour=dt.hour, minute=dt.minute)
+                    elif "вчера" in datetime_field:
+                        datetime_field = re.match(r".+ (\d+:\d+)", datetime_field).group(1)
+                        dt = datetime.strptime(datetime_field, "%H:%M")
+                        dt = datetime.now().replace(hour=dt.hour, minute=dt.minute)
+                        dt = dt - timedelta(days=1)
+                    else:
+                        continue
+
+
+                # Extract rooms number
+                room_number = int(re.match(r".+ (\d)-к ", offer_type_field).group(1))
+                # Extract area
+                area = int(re.match(r"(\d+)", area_field.strip()).group(1))
+                # Extract floor
+                floor = int(re.match(r"(\d+)/", floor_field.strip()).group(1))
+
+                # Cost and phone
+                list_group = offer_page.find_all("li", class_="list-group-item")
+                cost = int(list_group[0].next_element.next_element.contents[0].replace(" ", ""))
+                if cost > maxprice:
+                    print("!!!MORE THAN MAXPRICE!!!")
+                    continue
+                #adr = list_group[1].contents[0].replace("\n", "").strip()
+                descr = list_group[2].next_element.contents[0]
+                contact_phone = list_group[4].next_element
+                a = list(str(list_group[1].text).split("\n"))
+                adr = "Москва, " + a[1].strip()
+                metro = [a[0][a[0].find(" "):].strip()]
+                
+
+                # Pics
+                images = offer_page.find_all("img", class_="img-responsive center-block")
+                images = ["http://rentooki.ru"+x["src"] for x in images]
+
+
+                # Group parsed data
+                offer = {
+                    "url": "http://rentooki.ru"+link,
+                    "room_num": room_number,
+                    "area": area,
+                    "floor": floor,
+                    "cost": cost,
+                    "contacts": {"phone": contact_phone},
+                    "metro": metro,
+                    "pics": images,
+                    "date": dt.strftime("%d.%m.%Y"),
+                    "adr": adr,
+                    "descr": descr
+                }
+
+                from pprint import pprint
+                pprint(offer['url'])
+
+                p.append(offer)
+
+            except:
+                pass
+
+
+            # Next page on next iteration
+            page_index += 1
+            p.write_status(page_index)
+
+    p.add_date()
+
     
 #===========================================OPTIMIZATION============================================#
 
@@ -458,3 +566,5 @@ def parse_it(name, maxprice):
         realestate(maxprice)
     elif name == 'kvartirant':
         kvartirant(maxprice)
+    elif name == 'rentooki':
+        parse_rentookiru(maxprice)

@@ -28,6 +28,12 @@ def st():
     	t.start()
     redirect("/")
 
+@get("/special_parse/<parser_name>")
+def spp(parser_name):
+    maxprice = int(request.query.maxprice)
+    t = threading.Thread(target = parse_it, args=(parser_name, maxprice,))
+    t.start()
+
 @get("/res/<parser>")
 def res(parser):
     p = DataBase('parseRes.db')
