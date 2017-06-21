@@ -460,6 +460,7 @@ def parse_rentookiru(maxprice):
 
         # Exit on end
         if "Следующая" not in offers_page_html:
+            print("\nNo sleduyushaya!!!\n")
             break
 
         for link in links:
@@ -563,7 +564,7 @@ def parse_rentookiru(maxprice):
 #===========================================OPTIMIZATION============================================#
 
 def parse_it(name, maxprice):
-    print("!!!!!!!!!!!!!!!!!!!!!!!!!11", name)
+    print("!!!!!!!!!!!!!!!!!!!!!!!!!", name)
     if name == 'cian':
         cian(maxprice)
     elif name == 'realEstate':

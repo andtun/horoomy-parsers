@@ -13,7 +13,9 @@ PARSER_LIST = json.loads(open('parser_list.json', 'r').read())
 # creating all status files
 for p in PARSER_LIST:
     filename = "./statuses/"+p+".txt"
-    open(filename, 'w').close()
+    f = open(filename, 'w')
+    f.write('last updated on: never')
+    f.close()
 
 
 @get("/")
@@ -23,6 +25,9 @@ def main():
 @get("/start_parse")
 def st():              
     maxprice = request.query.maxprice
+    db = DataBase('parseRes.db')
+    db.query("DELETE FROM Results")
+    del db
     for parser_name in PARSER_LIST:
     	t = threading.Thread(target = parse_it, args=(parser_name, maxprice,))    	
     	t.start()

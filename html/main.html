@@ -61,7 +61,7 @@
 	</div>
 
 	<form action="/start_parse" onsubmit="document.getElementById('stp').disabled = true; await sleep(1000);" method="GET">
-	<input type="number" placeholder="Макс цена, руб" name="maxprice">
+	<input type="number" placeholder="Макс цена, руб" name="maxprice" required>
 	<span style="margin-right: 10%;"><input type="submit" id="stp" value="Начать парсинг" disabled></span>
 	<a href="/db">Скачать базу данных</a>
 	</form>
