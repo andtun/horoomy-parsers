@@ -196,7 +196,7 @@ def realestate(maxprice):
         p = Parse('realEstate')
         currentPage = 1
         template = 'http://www.realestate.ru'
-        page_url_template = 'http://www.realestate.ru/flatrent/s/rcs10.1.2.3-rgs1.2.3.4.5.6.7.8.9.10-prt{0}/pg'.format(int(maxprice)//1000)#'http://www.realestate.ru/flatrent/pg'
+        page_url_template = 'http://www.realestate.ru/flatrent/s/rcs10.1.2.3-prt{0}/pg'.format(int(maxprice)//1000)#'http://www.realestate.ru/flatrent/pg'
         page_url = page_url_template  + str(currentPage) + '/'
         total_pages = get_total_pages(page_url)+1
         out = []
