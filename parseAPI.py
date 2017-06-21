@@ -312,9 +312,10 @@ def kvartirant(maxprice):
         #   return False
 
         #Date
+        
         date = base.find('div', class_='col-xs-12 col-sm-4 text-center padding_t10 obj-data').text.split()[0].split(':')[1]
         if(date=='Сегодня'):
-            date = str(datetime.datetime.today()).split()[0].split('-')
+            date = str(datetime.today()).split()[0].split('-')
             date = '.'.join(list(reversed(date)))
         else:
             date = date.replace('/','.')
@@ -510,7 +511,7 @@ def parse_rentookiru(maxprice):
                 # Cost and phone
                 list_group = offer_page.find_all("li", class_="list-group-item")
                 cost = int(list_group[0].next_element.next_element.contents[0].replace(" ", ""))
-                if cost > maxprice:
+                if int(cost) > int(maxprice):
                     print("!!!MORE THAN MAXPRICE!!!")
                     continue
                 #adr = list_group[1].contents[0].replace("\n", "").strip()
@@ -546,7 +547,8 @@ def parse_rentookiru(maxprice):
 
                 p.append(offer)
 
-            except:
+            except Exception as e:
+                print("Rukozhop EXCEPTION", str(e))
                 pass
 
 
@@ -560,6 +562,7 @@ def parse_rentookiru(maxprice):
 #===========================================OPTIMIZATION============================================#
 
 def parse_it(name, maxprice):
+    print("!!!!!!!!!!!!!!!!!!!!!!!!!11", name)
     if name == 'cian':
         cian(maxprice)
     elif name == 'realEstate':
