@@ -223,6 +223,7 @@ def realestate(maxprice):
                     print('Current page: %s' % currentPage)
                 except Exception as e:
                     print(str(e), "BUT WE CONTINUE OPERATING")
+                    pass
 
         p.add_date()
 
