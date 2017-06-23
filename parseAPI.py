@@ -204,7 +204,8 @@ def realestate(maxprice):
 
         for currentPage in range(int(str(total_pages)[1:])):
             # if currentPage == 2:
-            #   break   
+            #   break
+            print("---CURRENT__PAGE: ", currentPage)
             page_url = page_url_template  + str(currentPage) + '/'
             soup = BeautifulSoup(get_html(page_url), 'lxml')
             ads = soup.find('section', class_='clear-fix').find_all('div', class_='contentblock')[1].find('div', class_='main-content').find('div', class_='list-panel').find_all('div', class_='obj')
