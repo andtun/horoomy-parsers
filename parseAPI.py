@@ -202,7 +202,7 @@ def realestate(maxprice):
         print("TOTAL PAGES:", total_pages)
         out = []
 
-        for currentPage in range(int(str(total_pages)[1:])):
+        for currentPage in range(total_pages)[1:]:
             # if currentPage == 2:
             #   break
             print("---CURRENT__PAGE: ", currentPage)
@@ -228,6 +228,7 @@ def realestate(maxprice):
                     pass
 
         p.add_date()
+        del p
 
     # run
     realest(maxprice)
@@ -435,7 +436,8 @@ def kvartirant(maxprice):
 
         print('Done!')
         p.add_date()
-        #return out          
+        #return out
+        del p
 
 
         # run
@@ -561,6 +563,7 @@ def parse_rentookiru(maxprice):
             p.write_status(page_index)
 
     p.add_date()
+    del p
 
     
 #===========================================OPTIMIZATION============================================#

@@ -119,7 +119,8 @@ NULL,
         self.db.query(cmnd)
         print("\n\n-----ONE MORE WITH "+self.name+"-----\n\n")
 
-
+    def __del__(self):
+        del self.db
 
 
 
