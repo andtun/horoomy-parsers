@@ -199,6 +199,7 @@ def realestate(maxprice):
         page_url_template = 'http://www.realestate.ru/flatrent/s/rcs10.1.2.3-prt{0}/pg'.format(int(maxprice)//1000)#'http://www.realestate.ru/flatrent/pg'
         page_url = page_url_template  + str(currentPage) + '/'
         total_pages = get_total_pages(page_url)+1
+        print("TOTAL PAGES:", total_pages)
         out = []
 
         for currentPage in range(int(str(total_pages)[1:])):
