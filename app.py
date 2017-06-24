@@ -9,18 +9,22 @@ from database import DataBase
 
 
 PARSER_LIST = json.loads(open('parser_list.json', 'r').read())
+FORMAT_DIC = json.loads(open('alerts.json', 'r').read())
 
 # creating all status files
 for p in PARSER_LIST:
     filename = "./statuses/"+p+".txt"
-    f = open(filename, 'w')
-    f.write('last updated on: never')
-    f.close()
+    try:
+        f = open(filename, 'r').close()
+    except:
+        f = open(filename, 'w')
+        f.write('last updated on: never')
+        f.close()
 
 
 @get("/")
 def main():
-    return static_file("main.html", root="./html")
+    return template("./html/main.html", version=FORMAT_DIC['version'], added=FORMAT_DIC['added'], othertext=FORMAT_DIC['othertext'])
 
 @get("/start_parse")
 def st():              
