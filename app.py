@@ -9,7 +9,7 @@ from database import DataBase
 
 
 PARSER_LIST = json.loads(open('parser_list.json', 'r').read())
-FORMAT_DIC = json.loads(open('alerts.json', 'r', encoding='ANSI').read())
+FORMAT_DIC = json.loads(open('alerts.json', 'r', encoding='utf-8').read())
 
 # creating all status files
 for p in PARSER_LIST:
@@ -37,7 +37,7 @@ def change():
     for param in request.query:
         if request.query[param] != "":
             FORMAT_DIC[param] = request.query[param]
-    f = open('alerts.json', 'w', encoding='ANSI')
+    f = open('alerts.json', 'w', encoding='utf-8')
     f.write(json.dumps(FORMAT_DIC, ensure_ascii=False))
     f.close()
     redirect("/adm/main")
