@@ -9,7 +9,7 @@ from database import DataBase
 
 
 PARSER_LIST = json.loads(open('parser_list.json', 'r').read())
-FORMAT_DIC = json.loads(open('alerts.json', 'r').read())
+FORMAT_DIC = json.loads(open('alerts.json', 'r', encoding='utf-8').read())
 
 # creating all status files
 for p in PARSER_LIST:
