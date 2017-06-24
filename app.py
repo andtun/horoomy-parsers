@@ -15,7 +15,12 @@ FORMAT_DIC = json.loads(open('alerts.json', 'r', encoding='utf-8').read())
 for p in PARSER_LIST:
     filename = "./statuses/"+p+".txt"
     try:
-        f = open(filename, 'r').close()
+        f = open(filename, 'r')
+        if "last updated on:" not in f.read():
+            f.close()
+            f = open(filename, 'w')
+            f.write('last updated on: never')
+            f.close()
     except:
         f = open(filename, 'w')
         f.write('last updated on: never')
