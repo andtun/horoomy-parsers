@@ -9,7 +9,7 @@ from database import DataBase
 
 
 PARSER_LIST = json.loads(open('parser_list.json', 'r').read())
-FORMAT_DIC = json.loads(open('alerts.json', 'r').read())
+FORMAT_DIC = json.loads(open('alerts.json', 'r', encoding='ANSI').read())
 
 # creating all status files
 for p in PARSER_LIST:
@@ -25,6 +25,22 @@ for p in PARSER_LIST:
 @get("/")
 def main():
     return template("./html/main.html", version=FORMAT_DIC['version'], added=FORMAT_DIC['added'], othertext=FORMAT_DIC['othertext'])
+
+
+@get("/adm/main")
+def main():
+    return template("./html/main-adm.html", version=FORMAT_DIC['version'], added=FORMAT_DIC['added'], othertext=FORMAT_DIC['othertext'])
+
+
+@get("/changemain")
+def change():
+    for param in request.query:
+        if request.query[param] != "":
+            FORMAT_DIC[param] = request.query[param]
+    f = open('alerts.json', 'w', encoding='ANSI')
+    f.write(json.dumps(FORMAT_DIC, ensure_ascii=False))
+    f.close()
+    redirect("/adm/main")
 
 @get("/start_parse")
 def st():              
