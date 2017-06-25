@@ -88,5 +88,12 @@ def db():
 def cn():
     return static_file("cian.json", root='./results')
 
+@get("/start_social")
+def st():
+    n = request.query.num
+    t = threading.Thread(target=parse_it, args=('vk', n,))
+    t.start()
+    redirect("/")
+
 
 run(host="0.0.0.0", port=os.environ.get('PORT', 5000))

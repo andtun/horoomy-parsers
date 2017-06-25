@@ -5,6 +5,7 @@ import requests
 import json
 import time
 import datetime
+import threading
 from bs4 import BeautifulSoup
 from time import gmtime, strftime
 from parser_class import Parse
@@ -565,6 +566,61 @@ def parse_rentookiru(maxprice):
     p.add_date()
     del p
 
+
+#================================================VK=================================================#
+
+def vk(n):        
+
+    def picsarr(offer):
+        parr = []
+        try:
+            pics = offer['attachments']
+            print(len(pics))
+            for pic in pics:
+                if pic['type'] == "photo":
+                    picurl = pic['photo']['src_big']
+                    parr.append(picurl)
+        except:
+            pass
+        return parr
+
+
+    def parse_vk_community(community, n):
+
+
+        def getVkId(offer):
+            vkid = offer['from_id']
+            if vkid < 0:
+                return "http://vk.com/club"+str(-vkid)
+            return "http://vk.com/id"+str(vkid)
+                
+        
+        counter = 0
+        c = community['id']
+        p = Parse(community['name'])
+        for i in range(0, n+1, 100):
+            offset = str(i)
+            adr = "https://api.vk.com/method/wall.get?owner_id=-%s&count=100&filter=all&access_token=732c7b09732c7b09732c7b090673709b7f7732c732c7b092a6093eafb623ad5547f142f&offset=%s" % (c, offset)
+            print(adr)
+            offers = json.loads(requests.get(adr).text)
+            offers = offers['response']
+            for offer in offers[1:]:
+                try:
+                    counter += 1
+                    p.write_status(counter)
+                    p.append({'date': str(strftime("%Y-%m-%d %H:%M:%S", gmtime(offer['date']))), 'cost': 0, 'room_num': 0, 'area': 0, 'contacts': {'phone': '---', 'vk': getVkId(offer)}, 'pics': picsarr(offer), 'descr': offer['text'], 'metro': ['---'], 'url': "https://vk.com/wall-%s_%s" % (c, str(offer['id'])), 'loc': ["---"], 'adr': 'no_adress'})
+                except:
+                    pass
+        p.add_date()
+        del p
+
+    
+    COMMUNITIES = [{'id': '1060484', 'name': "sdamsnimu"}, {'id': '29403745', 'name': "sdatsnyat"}, {'id': '62069824', 'name': "rentm"}, {'id': '49428949', 'name': "novoselie"}]
+    
+    for community in COMMUNITIES:
+        threading.Thread(target=parse_vk_community, args=(community, n,)).start()
+        #parse_vk_community(community)
+        print("!!!!!!!!!!!!!1NOW WE PARSE",community)
     
 #===========================================OPTIMIZATION============================================#
 
@@ -578,3 +634,6 @@ def parse_it(name, maxprice):
         kvartirant(maxprice)
     elif name == 'rentooki':
         parse_rentookiru(maxprice)
+    elif name == 'vk':
+        vk(maxprice)
+
