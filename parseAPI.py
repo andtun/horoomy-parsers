@@ -598,7 +598,7 @@ def vk(n):
         counter = 0
         c = community['id']
         p = Parse(community['name'])
-        for i in range(0, n+1, 100):
+        for i in range(0, n, 100):
             offset = str(i)
             adr = "https://api.vk.com/method/wall.get?owner_id=-%s&count=100&filter=all&access_token=732c7b09732c7b09732c7b090673709b7f7732c732c7b092a6093eafb623ad5547f142f&offset=%s" % (c, offset)
             print(adr)
@@ -618,8 +618,8 @@ def vk(n):
     COMMUNITIES = [{'id': '1060484', 'name': "sdamsnimu"}, {'id': '29403745', 'name': "sdatsnyat"}, {'id': '62069824', 'name': "rentm"}, {'id': '49428949', 'name': "novoselie"}]
     
     for community in COMMUNITIES:
-        threading.Thread(target=parse_vk_community, args=(community, n,)).start()
-        #parse_vk_community(community)
+        #threading.Thread(target=parse_vk_community, args=(community, n,)).start()
+        parse_vk_community(community)
         print("!!!!!!!!!!!!!1NOW WE PARSE",community)
     
 #===========================================OPTIMIZATION============================================#
