@@ -90,7 +90,7 @@ def cn():
 
 @get("/start_social")
 def st():
-    n = request.query.num
+    n = int(request.query.num)
     t = threading.Thread(target=parse_it, args=('vk', n,))
     t.start()
     redirect("/")
