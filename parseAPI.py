@@ -619,7 +619,7 @@ def vk(n):
     
     for community in COMMUNITIES:
         #threading.Thread(target=parse_vk_community, args=(community, n,)).start()
-        parse_vk_community(community)
+        parse_vk_community(community, n)
         print("!!!!!!!!!!!!!1NOW WE PARSE",community)
     
 #===========================================OPTIMIZATION============================================#
