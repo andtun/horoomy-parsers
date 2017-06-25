@@ -605,12 +605,12 @@ def vk(n):
             offers = json.loads(requests.get(adr).text)
             offers = offers['response']
             for offer in offers[1:]:
-                try:
-                    counter += 1
-                    p.write_status(counter)
-                    p.append({'date': str(strftime("%Y-%m-%d %H:%M:%S", gmtime(offer['date']))), 'cost': 0, 'room_num': 0, 'area': 0, 'contacts': {'phone': '---', 'vk': getVkId(offer)}, 'pics': picsarr(offer), 'descr': offer['text'], 'metro': ['---'], 'url': "https://vk.com/wall-%s_%s" % (c, str(offer['id'])), 'loc': ["---"], 'adr': 'no_adress'})
-                except:
-                    pass
+                #try:
+                counter += 1
+                p.write_status(counter)
+                p.append({'date': str(strftime("%Y-%m-%d %H:%M:%S", gmtime(offer['date']))), 'cost': 0, 'room_num': 0, 'area': 0, 'contacts': {'phone': '---', 'vk': getVkId(offer)}, 'pics': picsarr(offer), 'descr': offer['text'], 'metro': ['---'], 'url': "https://vk.com/wall-%s_%s" % (c, str(offer['id'])), 'loc': ["---"], 'adr': 'no_adress'})
+                #except:
+                 #   pass
         p.add_date()
         del p
 
