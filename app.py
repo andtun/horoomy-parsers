@@ -95,5 +95,9 @@ def st():
     t.start()
     redirect("/")
 
+@post("/errorBot")
+def err():
+    print(request.json)
+
 
 run(host="0.0.0.0", port=os.environ.get('PORT', 5000))
