@@ -6,6 +6,7 @@ from parseAPI import parse_it
 from bottle import *
 from parser_class import Parse
 from database import DataBase
+from botApi import tgErrCatch
 
 
 PARSER_LIST = json.loads(open('parser_list.json', 'r').read())
@@ -98,6 +99,12 @@ def st():
 @post("/errorBot")
 def err():
     print(request.json)
+    return "OK"
 
+@get("/zerodiv")
+@tgErrCatch
+def abc():
+    a = 17/0
+    return(str(a))
 
 run(host="0.0.0.0", port=os.environ.get('PORT', 5000))
