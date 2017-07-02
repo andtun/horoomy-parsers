@@ -14,7 +14,7 @@ class DataBase:
 
     def query(self, query):
         self._db_cur.execute(query)
-        self._db_connection.commit()
+        #self._db_connection.commit()
         return
 
     def fetch(self, query):
@@ -24,6 +24,7 @@ class DataBase:
         self._db_connection.commit()
 
     def __del__(self):
+        self._db_connection.commit()
         self._db_connection.close()
 
 

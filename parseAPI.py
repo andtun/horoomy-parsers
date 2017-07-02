@@ -6,6 +6,7 @@ import json
 import time
 import datetime
 import threading
+from botApi import alertExc
 from bs4 import BeautifulSoup
 from time import gmtime, strftime
 from parser_class import Parse
@@ -192,9 +193,8 @@ def realestate(maxprice):
 
 
 
-
     def realest(maxprice):
-        p = Parse('realEstate')
+        
         currentPage = 1
         template = 'http://www.realestate.ru'
         page_url_template = 'http://www.realestate.ru/flatrent/s/rcs10.1.2.3-prt{0}/pg'.format(int(maxprice)//1000)#'http://www.realestate.ru/flatrent/pg'
@@ -204,6 +204,7 @@ def realestate(maxprice):
         out = []
 
         for currentPage in range(total_pages)[1:]:
+            p = Parse('realEstate')
             # if currentPage == 2:
             #   break
             print("---CURRENT__PAGE: ", currentPage)
@@ -224,10 +225,12 @@ def realestate(maxprice):
                     #print(data)
                     p.write_status(currentPage)
                     print('Current page: %s' % currentPage)
-                except Exception as e:
-                    print(str(e), "BUT WE CONTINUE OPERATING")
+                except:
+                    alertExc()
                     pass
+            del p
 
+        p = Parse('realEstate')
         p.add_date()
         del p
 
@@ -402,7 +405,6 @@ def kvartirant(maxprice):
 
     def kvartir (maxprice):
         # maxprice = 30000
-        p = Parse('kvartirant')
         base_url = 'http://www.kvartirant.ru/bez_posrednikov/Moskva/sniat-kvartiru/'
         params = '&cost_limit={0}&komnat[]=1&komnat[]=2&komnat[]=3'.format(maxprice)
         template = 'http://www.kvartirant.ru'
@@ -411,6 +413,7 @@ def kvartirant(maxprice):
         # out = []
         total_pages = get_total_pages(html)
         for page in range(total_pages)[1:]:
+            p = Parse('kvartirant')
             url = base_url + '?page=' + str(page) + params
             html = get_html(url)
             groups = get_objects_group(html)
@@ -430,12 +433,14 @@ def kvartirant(maxprice):
                         else:
                             print('Daily')# | room_num more than 3 rooms | cost more than maxprice')
                     except Exception as e:
-                        print(str(e), "BUT WE CONTINUE OPERATING")
+                        alertExc()
+            del p
             # with open('text.txt', 'w', encoding='utf-8') as out_file:
             #   out_file.write(str(out))
             # break 
 
         print('Done!')
+        p = Parse('kvartirant')
         p.add_date()
         #return out
         del p
@@ -448,10 +453,10 @@ def kvartirant(maxprice):
 #===================================================================================================#
 
 
+
 def parse_rentookiru(maxprice):
 
     # offers = []
-    p = Parse('rentooki')
     # Iterate page indexes
     page_index = 1
     while True:
@@ -469,6 +474,7 @@ def parse_rentookiru(maxprice):
             break
 
         for link in links:
+            p = Parse('rentooki')
             try:
 
                 # Get offer page
@@ -553,16 +559,20 @@ def parse_rentookiru(maxprice):
                 pprint(offer['url'])
 
                 p.append(offer)
+                #del p
 
-            except Exception as e:
-                print("Rukozhop EXCEPTION", str(e))
+            except:
+                alertExc()
                 pass
 
 
             # Next page on next iteration
             page_index += 1
             p.write_status(page_index)
+            del p
 
+    
+    p = Parse('rentooki')
     p.add_date()
     del p
 
@@ -581,6 +591,7 @@ def vk(n):
                     picurl = pic['photo']['src_big']
                     parr.append(picurl)
         except:
+            alertExc()
             pass
         return parr
 
@@ -610,7 +621,7 @@ def vk(n):
                     p.write_status(counter)
                     p.append({'date': str(strftime("%Y-%m-%d %H:%M:%S", gmtime(offer['date']))), 'cost': 0, 'room_num': 0, 'area': 0, 'contacts': {'phone': '---', 'vk': getVkId(offer)}, 'pics': picsarr(offer), 'descr': offer['text'], 'metro': ['---'], 'url': "https://vk.com/wall-%s_%s" % (c, str(offer['id'])), 'loc': ["---"], 'adr': 'no_adress'})
                 except Exception as e:
-                    print("!!!!!!!!!!!!LOOP EXC", str(e))
+                    alertExc()
                     pass
         p.add_date()
         del p

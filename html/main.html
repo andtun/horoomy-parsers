@@ -51,6 +51,11 @@
 
 		window.onload = function(){get_parser_list(); setInterval(get_parser_list, 1500);}
 
+		function restartServ() {
+		var r = new XMLHttpRequest();
+		r.open('GET', "/stop_parsing", true);
+		r.send();
+		}
 
 	</script>
 </head>
@@ -73,6 +78,7 @@
 <input type="number" name="num" placeholder="Записей для каждой группы" min="100" max="800" step="100" style="width: 200px;" required>
 <input type="submit" value="Начать парсинг ВК">
 </form>
+<form action="javascript:restartServ();"><input type="submit" value="Stop parsing"></form>
 </div>
 <span>
 <div><h3>Уведомления от разработчика</h3></div>

@@ -1,6 +1,9 @@
 # This Python file uses the following encoding: utf-8
 
+import sys
+import json
 import requests
+from traceback import format_tb
 
 
 ERROR_CHAT_ID = '273633310'
@@ -10,18 +13,22 @@ class Bot:
     full_link = ""
 
     def __init__(self, chat_id):
-        self.full_link = "https://api.telegram.org/bot332143024:AAFXvkc397uXcvN3HgbiKQ0GTaNXKf-H-zs/%s&chat_id="+chat_id
+        self.full_link = "https://api.telegram.org/bot332143024:AAFXvkc397uXcvN3HgbiKQ0GTaNXKf-H-zs/%s?chat_id="+chat_id
 
     def sendMessage(self, text):
-        link_text = "sendMessage?text="+text
-        requests.get(self.full_link % link_text)
+        requests.post(self.full_link % 'sendMessage', data={'text': text})
 
 
-def tgErrCatch(func):
+def alertExc():
+    exc_type, exc_value, exc_traceback = sys.exc_info()
+    Bot(ERROR_CHAT_ID).sendMessage(str(format_tb(exc_traceback)) + str(exc_value) + str(exc_type))
+            
+
+def tgExcCatch(func):
     def wrapper():
         try:
             func()
-        except Exception as e:
-           Bot(ERROR_CHAT_ID).sendMessage(str(e))
+        except:
+            alertExc()
 
-        return wrapper
+    return wrapper

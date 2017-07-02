@@ -6,11 +6,12 @@ from parseAPI import parse_it
 from bottle import *
 from parser_class import Parse
 from database import DataBase
-from botApi import tgErrCatch
+from botApi import tgExcCatch, alertExc
 
 
 PARSER_LIST = json.loads(open('parser_list.json', 'r').read())
 FORMAT_DIC = json.loads(open('alerts.json', 'r', encoding='utf-8').read())
+
 
 # creating all status files
 for p in PARSER_LIST:
@@ -55,15 +56,21 @@ def st():
     db.query("DELETE FROM Results")
     del db
     for parser_name in PARSER_LIST:
-    	t = threading.Thread(target = parse_it, args=(parser_name, maxprice,))    	
-    	t.start()
+        t = threading.Thread(target = parse_it, args=(parser_name, maxprice,))    	
+        t.daemon = True
+        t.start()
     redirect("/")
 
 @get("/special_parse/<parser_name>")
 def spp(parser_name):
     maxprice = int(request.query.maxprice)
     t = threading.Thread(target = parse_it, args=(parser_name, maxprice,))
+    t.daemon = True
     t.start()
+
+@get("/stop_parsing")
+def st():
+    raise RuntimeError('now the server will restart!')
 
 @get("/res/<parser>")
 def res(parser):
@@ -93,6 +100,7 @@ def cn():
 def st():
     n = int(request.query.num)
     t = threading.Thread(target=parse_it, args=('vk', n,))
+    t.daemon = True
     t.start()
     redirect("/")
 
@@ -102,9 +110,10 @@ def err():
     return "OK"
 
 @get("/zerodiv")
-@tgErrCatch
+@tgExcCatch
 def abc():
     a = 17/0
+    #print(str(a))
     return(str(a))
 
 run(host="0.0.0.0", port=os.environ.get('PORT', 5000))
