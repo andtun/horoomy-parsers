@@ -6,7 +6,7 @@ import json
 import time
 import datetime
 import threading
-from botApi import alertExc
+from botApi import alertExc, tgExcCatch
 from bs4 import BeautifulSoup
 from time import gmtime, strftime
 from parser_class import Parse
@@ -636,6 +636,7 @@ def vk(n):
     
 #===========================================OPTIMIZATION============================================#
 
+@tgExcCatch
 def parse_it(name, maxprice):
     print("!!!!!!!!!!!!!!!!!!!!!!!!!", name)
     if name == 'cian':
