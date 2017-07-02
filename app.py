@@ -112,11 +112,11 @@ def err():
     print(request.json)
     return "OK"
 
-@get("/zerodiv")
+'''@get("/zerodiv")
 @tgExcCatch
 def abc():
     a = 17/0
     #print(str(a))
-    return(str(a))
+    return(str(a))'''
 
 run(host="0.0.0.0", port=os.environ.get('PORT', 5000))

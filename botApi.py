@@ -25,10 +25,12 @@ def alertExc():
             
 
 def tgExcCatch(func):
-    def wrapper():
+    def wrapper(arg1, arg2):
         try:
-            func()
+            func(arg1, arg2)
         except:
             alertExc()
 
     return wrapper
+
+#there has to be @tgExcCatch with no args - this works only for two args
