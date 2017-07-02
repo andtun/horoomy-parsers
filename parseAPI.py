@@ -585,13 +585,13 @@ def vk(n):
         parr = []
         try:
             pics = offer['attachments']
-            print(len(pics))
+            #print(len(pics))
             for pic in pics:
                 if pic['type'] == "photo":
                     picurl = pic['photo']['src_big']
                     parr.append(picurl)
         except:
-            alertExc()
+            #alertExc()
             pass
         return parr
 

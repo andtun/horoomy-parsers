@@ -50,6 +50,7 @@ def change():
     redirect("/adm/main")
 
 @get("/start_parse")
+@tgExcCatch
 def st():              
     maxprice = request.query.maxprice
     db = DataBase('parseRes.db')
@@ -69,6 +70,7 @@ def spp(parser_name):
     t.start()
 
 @get("/stop_parsing")
+@tgExcCatch
 def st():
     raise RuntimeError('now the server will restart!')
 
@@ -97,6 +99,7 @@ def cn():
     return static_file("cian.json", root='./results')
 
 @get("/start_social")
+@tgExcCatch
 def st():
     n = int(request.query.num)
     t = threading.Thread(target=parse_it, args=('vk', n,))
