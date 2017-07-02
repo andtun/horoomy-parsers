@@ -515,7 +515,8 @@ def parse_rentookiru(maxprice):
 
 
                 # Extract rooms number
-                room_number = int(re.match(r".+ (\d)-к ", offer_type_field).group(1))
+                #room_number = int(re.match(r".+ (\d)-к ", offer_type_field).group(1))
+                room_number = 0
                 # Extract area
                 area = int(re.match(r"(\d+)", area_field.strip()).group(1))
                 # Extract floor
