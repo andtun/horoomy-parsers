@@ -844,6 +844,7 @@ def parse_it(name, maxprice):
         realestate(maxprice)
     elif name == 'kvartirant':
         kvartirant_room()
+        print("ROOOM STAGE FINISHED!")
         kvartirant(maxprice)
     elif name == 'rentooki':
         parse_rentookiru(maxprice)
