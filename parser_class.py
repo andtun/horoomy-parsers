@@ -115,7 +115,7 @@ NULL,
 '%s'
 );
 """ % (data['cost'], data['room_num'], data['area'], evolve(data['contacts']['phone'].replace("+7", "").replace(" ","").replace("-","").replace("(","").replace(")","")), data['date'], 'NULL', json.dumps(data['pics'], ensure_ascii=False), json.dumps(data['contacts'], ensure_ascii=False), data['descr'], data['adr'], json.dumps(data['metro'], ensure_ascii=False), data['url'], json.dumps(data['loc']), self.name)
-        #print(cmnd)
+        print(cmnd)
         self.db.query(cmnd)
         print("\n\n-----ONE MORE WITH "+self.name+"-----\n\n")
 

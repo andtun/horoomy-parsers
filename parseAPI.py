@@ -518,7 +518,7 @@ def kvartirant_room():
 
 
         #Room number
-        room_num = '-'
+        room_num = 0
         # if room_num > 3:
         #   return False
 
@@ -589,6 +589,12 @@ def kvartirant_room():
                 i += 1
             loc = temp[start:start+i-1].split()
 
+
+        from math import trunc
+        try:
+            area = trunc(float(area))
+        except:
+            area = 0
 
         data = {"cost": cost, "date": date, "contacts": contacts, "pics": pics, "descr": descr, "adr": adr, "loc": loc, "metro": metro, "area": area, "room_num": room_num, "url": url}
         return data
