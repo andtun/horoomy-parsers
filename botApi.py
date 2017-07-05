@@ -15,16 +15,19 @@ class Bot:
     def sendMessage(self, text):
         requests.post(self.full_link % 'sendMessage', data={'text': text})
 
-
+# since we use only one bot, here are its params
 ERROR_CHAT_ID = '273633310'
 alertBot = Bot(ERROR_CHAT_ID)
 
 
+
+# alerting an exception occured with the bot
 def alertExc():
     exc_type, exc_value, exc_traceback = sys.exc_info()
     Bot(ERROR_CHAT_ID).sendMessage(str(format_tb(exc_traceback)) + str(exc_value) + str(exc_type))
             
 
+# a decorator to catch&alert exceptions
 def tgExcCatch(func):
     def wrapper(arg1, arg2):
         try:
@@ -33,5 +36,6 @@ def tgExcCatch(func):
             alertExc()
 
     return wrapper
+
 
 #there has to be @tgExcCatch with no args - this works only for two args

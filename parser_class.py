@@ -5,6 +5,7 @@ import requests
 from database import DataBase
 from time import gmtime, strftime
 
+
 # when we start app.py
 db = DataBase('parseRes.db')
 try:
@@ -15,12 +16,14 @@ print("!!!db created!!!")
 del db
 
 
+# for phone numbers, not to use lambda
 def evolve(a):
     if len(a) == 11:
         return a[1:]
     return a
     
 
+# for optimizating work of all parsers
 class Parse:
     name = ""
     status_key = ""
@@ -32,7 +35,8 @@ class Parse:
         self.name = name
         self.status_file = "./statuses/" + name + ".txt"
         self.results_file = "./results/" + name + ".json"
-        self.db = DataBase('parseRes.db')
+        self.db = DataBase('parseRes.db')   # self db connection to enable multithreading
+                                            # (MAYBE NO NEED FOR IT IN MULTIPROCESSING?)
 
 
     def save_results(self, results):
@@ -42,6 +46,7 @@ class Parse:
         f.close()
 
 
+    # for statistics abouth the number of links processed
     def write_status(self, status):
         f = open(self.status_file, 'w', encoding='utf-8')
         towrite = str(status) + " links processed"
@@ -49,6 +54,7 @@ class Parse:
         f.close()
         
 
+    # last updated on...
     def add_date(self):
         data = "last updated on: " + str(strftime("%Y-%m-%d %H:%M:%S", gmtime()))
         f = open(self.status_file, 'w', encoding='utf-8')
@@ -56,8 +62,12 @@ class Parse:
         f.close()
 
 
+
+    # appending to db (like to a list)
     def append(self, data):       # working with db
 
+
+        # get coordinates if we know adress
         def get_loc(adr):
             api_adr = adr.replace(' ', '+')
             url = "https://geocode-maps.yandex.ru/1.x/?geocode=%s&format=json&results=1" % api_adr
@@ -69,6 +79,8 @@ class Parse:
             loc = loc[1] + "," + loc[0]
             return loc
 
+
+        # get adress if we know coordinates
         def get_adr(loc):
             url = "https://geocode-maps.yandex.ru/1.x/?geocode=%s&format=json&results=1" % loc
             adr = requests.get(url).text
@@ -78,7 +90,7 @@ class Parse:
 
 
 
-    #  SET CHECK IF THE FLAT ALREADY EXISTS
+    #  SET CHECK IF THE FLAT ALREADY EXISTS   !!!!!!!!!!!!!!!!!!!!!
 
 
     # getting loc and adr
@@ -89,13 +101,15 @@ class Parse:
                 data['loc'] = "YANDEXLOCERR"
                 print('YANDEXLOCERR')
 
+
         elif ("loc" in data and "adr" not in data) or (data['adr'] == ""):
             try:
                 data["adr"] = get_adr(data["loc"])
             except:
                 data['adr'] = 'YANDEXADRERR'
                 print("YANDEXADRERR")
-        
+                
+        # forming db command
         cmnd = """
 INSERT INTO Results VALUES (
 NULL,
@@ -118,6 +132,8 @@ NULL,
         #print(cmnd)
         self.db.query(cmnd)
         print("\n\n-----ONE MORE WITH "+self.name+"-----\n\n")
+
+
 
     def __del__(self):
         del self.db
