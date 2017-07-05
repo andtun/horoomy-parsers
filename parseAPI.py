@@ -843,7 +843,7 @@ def parse_it(name, maxprice):
     elif name == 'realEstate':
         realestate(maxprice)
     elif name == 'kvartirant':
-        kvartirnat_room()
+        kvartiant_room()
         kvartirant(maxprice)
     elif name == 'rentooki':
         parse_rentookiru(maxprice)
