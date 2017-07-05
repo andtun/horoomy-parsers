@@ -84,7 +84,9 @@ def res(parser):
 @get("/parse_status/<parser>")
 def return_status(parser):
     filename = Parse(parser).status_file
-    return static_file(filename, root='')
+    resp = static_file(filename, root='')
+    resp.set_header("Cache-Control", 'no-store, no-cache, must-revalidate, max-age=0')
+    return resp
 
 @get("/plist")
 def pl():

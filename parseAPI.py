@@ -516,7 +516,7 @@ def parse_rentookiru(maxprice):
 
                 # Extract rooms number
                 #room_number = int(re.match(r".+ (\d)-к ", offer_type_field).group(1))
-                room_number = 0
+                room_number = str(offer_type_field)
                 # Extract area
                 area = int(re.match(r"(\d+)", area_field.strip()).group(1))
                 # Extract floor
@@ -639,7 +639,7 @@ def vk(n):
 
 @tgExcCatch
 def parse_it(name, maxprice):
-    print("!!!!!!!!!!!!!!!!!!!!!!!!!", name)
+    #print("!!!!!!!!!!!!!!!!!!!!!!!!!", name)
     if name == 'cian':
         cian(maxprice)
     elif name == 'realEstate':

@@ -14,7 +14,7 @@
 
 					function get(ourl) {
 
-					var nurl = "/parse_status/" + ourl
+					var nurl = "/parse_status/" + ourl + "?cache=dont"
 					var r = new XMLHttpRequest();
 					r.open('GET', nurl);
 					r.send();
