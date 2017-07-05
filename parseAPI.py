@@ -6,7 +6,7 @@ import json
 import time
 import datetime
 import threading
-from botApi import alertExc, tgExcCatch
+from botApi import alertExc, tgExcCatch, alertBot
 from bs4 import BeautifulSoup
 from time import gmtime, strftime
 from parser_class import Parse
@@ -533,7 +533,7 @@ def kvartirant_room():
         #Date
         date = base.find('div', class_='col-xs-12 col-sm-4 text-center padding_t10 obj-data').text.split()[0].split(':')[1]
         if(date=='Сегодня'):
-            date = str(datetime.datetime.today()).split()[0].split('-')
+            date = str(datetime.today()).split()[0].split('-')
             date = '.'.join(list(reversed(date)))
         else:
             date = date.replace('/','.')
@@ -590,7 +590,7 @@ def kvartirant_room():
             loc = temp[start:start+i-1].split()
 
 
-        data = {"cost": cost, "date": date, "contacts": contacts, "pics": pics, "descr": descr, "adr": adr, "loc": loc, "metro": metro, "area": area, "room_num": room_num, "prooflink": url}
+        data = {"cost": cost, "date": date, "contacts": contacts, "pics": pics, "descr": descr, "adr": adr, "loc": loc, "metro": metro, "area": area, "room_num": room_num, "url": url}
         return data
 
 
@@ -646,6 +646,8 @@ def kvartirant_room():
         del p
         print('Done!')
         #return out
+
+    realestate()
 
 
 #===================================================================================================#
@@ -714,7 +716,11 @@ def parse_rentookiru(maxprice):
 
                 # Extract rooms number
                 #room_number = int(re.match(r".+ (\d)-к ", offer_type_field).group(1))
-                room_number = str(offer_type_field)
+                room_number = list(str(offer_type_field).split(" "))[2]
+                if room_number != 'комната':
+                    room_number = int(room_number[0])
+                else:
+                    room_number = 0
                 # Extract area
                 area = int(re.match(r"(\d+)", area_field.strip()).group(1))
                 # Extract floor
@@ -844,7 +850,7 @@ def parse_it(name, maxprice):
         realestate(maxprice)
     elif name == 'kvartirant':
         kvartirant_room()
-        print("ROOOM STAGE FINISHED!")
+        alertBot.sendMessage("ROOOM STAGE FINISHED!")
         kvartirant(maxprice)
     elif name == 'rentooki':
         parse_rentookiru(maxprice)

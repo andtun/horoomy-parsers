@@ -6,9 +6,6 @@ import requests
 from traceback import format_tb
 
 
-ERROR_CHAT_ID = '273633310'
-
-
 class Bot:
     full_link = ""
 
@@ -17,6 +14,10 @@ class Bot:
 
     def sendMessage(self, text):
         requests.post(self.full_link % 'sendMessage', data={'text': text})
+
+
+ERROR_CHAT_ID = '273633310'
+alertBot = Bot(ERROR_CHAT_ID)
 
 
 def alertExc():
