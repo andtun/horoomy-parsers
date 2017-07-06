@@ -65,7 +65,7 @@ def change():
 def st():              
     maxprice = request.query.maxprice
     db = DataBase('parseRes.db')
-    db.query("DELETE FROM Results")
+    db.delete_table('Results')
     del db
     for parser_name in PARSER_LIST:
         t = threading.Thread(target = parse_it, args=(parser_name, maxprice,))    	

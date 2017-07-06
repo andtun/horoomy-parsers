@@ -12,7 +12,8 @@ from driveAPI import BackuppedFile
 db = DataBase('parseRes.db')
 #sync db
 
-backup_db = BackuppedFile('parseRes.db')
+backup_db = BackuppedFile('parseRes.db')    # BACKUP_DB IS IMPORTED AS A CONST
+
 backup_db.sync()
 
 #------------------------------------------------------

@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 from time import gmtime, strftime
 from parser_class import Parse
 from datetime import datetime, timedelta
-from driveAPI import BackuppedFile
+from driveAPI import BackuppedFile, backup_db
 
 # set minmax price !!!!
 
@@ -856,11 +856,15 @@ def bez_posrednikov(maxprice):
         if not (rooms_amount is None):
             rooms_amount = rooms_amount.find('div', {'class': 'field-item even'})
             rooms_amount = int(rooms_amount.text)
+        else:
+            rooms_amount = 0
 
         subway = content.find('section', {'class': 'field field-name-field-metro field-type-taxonomy-term-reference field-label-inline clearfix view-mode-full'})
         if not (subway is None):
             subway = subway.find('li', {'class': 'field-item even'})
-            subway = subway.text
+            subway = [subway.text]
+        else:
+            subway = []
 
         to_subway = content.find('section', {'class': 'field field-name-field-min-do-metro field-type-number-integer field-label-inline clearfix view-mode-full'})
         if not (to_subway is None):
@@ -887,6 +891,8 @@ def bez_posrednikov(maxprice):
             full_square = full_square.find('div', {'class': 'field-item even'})
             full_square = full_square.text.split()
             full_square = int(full_square[0])
+        else:
+            full_square = 0
 
         kitchen_square = content.find('section', {'class': 'field field-name-field-kuhnya field-type-number-decimal field-label-inline clearfix view-mode-full'})
         if not (kitchen_square is None):
@@ -899,6 +905,8 @@ def bez_posrednikov(maxprice):
             price = price.find('div', {'class': 'field-item even'})
             price = price.text.split()
             price = int(price[0]) * 1000 + int(price[1])
+        else:
+            price = 0
 
         contacts = content.find('section', {'class': 'field field-name-field-tel field-type-text field-label-inline clearfix view-mode-full'})
         if not (contacts is None):
@@ -1118,6 +1126,6 @@ def parse_it(name, maxprice):
     elif name == 'vk':
         vk(maxprice)
 
-    BackuppedFile('parseRes.db').upload()
+    backup_db.upload()
     
 
