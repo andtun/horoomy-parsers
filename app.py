@@ -2,7 +2,7 @@
 
 import threading
 import json
-from parseAPI import parse_it
+from parseAPI import parse_it, backup_db
 from bottle import *
 from parser_class import Parse
 from database import DataBase
@@ -156,7 +156,10 @@ def abc(a1, a2):
     #print(str(a))
     return(str(a))'''
 
-
+@get("/sync_db")
+def snc():
+    backup_db.upload()
+    redirect('/')
 
 # run the server
 
