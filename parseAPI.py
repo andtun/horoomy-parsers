@@ -937,7 +937,7 @@ def bez_posrednikov(maxprice):
         flat['cost'] = price
         flat['contacts'] = {'phone': contacts}
         flat['pics'] = photos
-        flat['url'] = advert_url
+        flat['url'] = url['home'] + advert_url
 
         return flat
 
