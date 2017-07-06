@@ -4,9 +4,18 @@ import json
 import requests
 from database import DataBase
 from time import gmtime, strftime
+from driveAPI import BackuppedFile
 
 
 # when we start app.py
+
+#sync db
+
+backup_db = BackuppedFile('parseRes.db')
+backup_db.sync()
+
+#------------------------------------------------------
+
 db = DataBase('parseRes.db')
 try:
     db.format()
@@ -14,6 +23,7 @@ except:
     print("db already formatted")
 print("!!!db created!!!")
 del db
+#------------------------------------------------------
 
 
 # for phone numbers, not to use lambda
@@ -60,6 +70,8 @@ class Parse:
         f = open(self.status_file, 'w', encoding='utf-8')
         f.write(data)
         f.close()
+
+        backup_db.upload()
 
 
 
