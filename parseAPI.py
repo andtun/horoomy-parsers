@@ -9,9 +9,9 @@ import threading
 from botApi import alertExc, tgExcCatch, alertBot
 from bs4 import BeautifulSoup
 from time import gmtime, strftime
-from parser_class import Parse
+from parser_class import Parse, backup_db
 from datetime import datetime, timedelta
-from driveAPI import BackuppedFile, backup_db
+from driveAPI import BackuppedFile
 
 # set minmax price !!!!
 
