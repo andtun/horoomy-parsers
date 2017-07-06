@@ -134,17 +134,24 @@ def st():
     t.daemon = True
     t.start()
     redirect("/")
-    
+
+
+@get("/clear_results")
+def clear():
+    db = DataBase('parseRes.db')
+    db.delete_table('Results')
+    del db
+    redirect('/')
 
 '''@post("/errorBot")
 def err():
     print(request.json)
-    return "OK"
+    return "OK"'''
 
 
-@get("/zerodiv")
+'''@get("/zerodiv")
 @tgExcCatch
-def abc():
+def abc(a1, a2):
     a = 17/0
     #print(str(a))
     return(str(a))'''

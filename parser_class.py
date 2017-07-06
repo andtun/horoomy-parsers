@@ -71,8 +71,6 @@ class Parse:
         f.write(data)
         f.close()
 
-        backup_db.upload()
-
 
 
     # appending to db (like to a list)

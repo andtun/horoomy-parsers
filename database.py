@@ -27,6 +27,9 @@ class DataBase:
         #self._db_connection.commit()
         self._db_connection.close()
 
+    def delete_table(self, table):
+        self.query('DELETE FROM %s;' % table)
+        self.query('VACUUM;')
 
     def format(self):
         # places - places of interest

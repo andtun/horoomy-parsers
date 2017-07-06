@@ -27,5 +27,10 @@ class BackuppedFile:
         DBX.files_upload(self.fileBytes, self.DBXfilename, mode=WriteMode('overwrite'))
         
     def sync(self):
+        print(self.filename)
+        print(self.DBXfilename)
         DBX.files_download_to_file(self.filename, self.DBXfilename, rev=None)
 
+
+if __name__ == "__main__":
+    BackuppedFile('parseRes.db').upload()
