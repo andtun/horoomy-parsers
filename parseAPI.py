@@ -1048,34 +1048,51 @@ def bez_posrednikov(maxprice):
     del p
 
 
+#===================================================================================================#
+                                    # WORKING WITH SOCIAL NETWORKS #
 #================================================VK=================================================#
+
+PRIORITY_CRITEREA = ["без комиссии", "без посредников", "сам", "самостоятельно", "на длительный срок", "долгосрочн", "долгий", "от собственника"]
+METRO_PRIORITY = ["у", "возле", "рядом", "недалеко", "поблизости"]
+
+def set_priority(descr):
+    
+    for cret in PRIORITY_CRITEREA:
+        if cret in descr.lower():
+            return "----!PRIORITY!----\n"+descr
+    for cret in METRO_PRIORITY:
+        if (cret+" метро") in descr.lower():
+            return "----!PRIORITY!----\n"+descr
+    
+    return descr
+
+
+def getVkId(offer):
+    vkid = offer['from_id']
+    if vkid < 0:
+        return "http://vk.com/club"+str(-vkid)
+    return "http://vk.com/id"+str(vkid)
+
+
+def picsarr(offer):
+    parr = []
+    try:
+        pics = offer['attachments']
+        #print(len(pics))
+        for pic in pics:
+            if pic['type'] == "photo":
+                picurl = pic['photo']['src_big']
+                parr.append(picurl)
+    except:
+        #alertExc()
+        pass
+    return parr
+
+
 
 def vk(n):        
 
-    def picsarr(offer):
-        parr = []
-        try:
-            pics = offer['attachments']
-            #print(len(pics))
-            for pic in pics:
-                if pic['type'] == "photo":
-                    picurl = pic['photo']['src_big']
-                    parr.append(picurl)
-        except:
-            #alertExc()
-            pass
-        return parr
-
-
     def parse_vk_community(community, n):
-
-
-        def getVkId(offer):
-            vkid = offer['from_id']
-            if vkid < 0:
-                return "http://vk.com/club"+str(-vkid)
-            return "http://vk.com/id"+str(vkid)
-                
         
         counter = 0
         c = community['id']
@@ -1090,7 +1107,7 @@ def vk(n):
                 try:
                     counter += 1
                     p.write_status(counter)
-                    p.append({'date': str(strftime("%Y-%m-%d %H:%M:%S", gmtime(offer['date']))), 'cost': 0, 'room_num': 0, 'area': 0, 'contacts': {'phone': '---', 'vk': getVkId(offer)}, 'pics': picsarr(offer), 'descr': offer['text'], 'metro': ['---'], 'url': "https://vk.com/wall-%s_%s" % (c, str(offer['id'])), 'loc': ["---"], 'adr': 'no_adress'})
+                    p.append({'date': str(strftime("%Y-%m-%d %H:%M:%S", gmtime(offer['date']))), 'cost': 0, 'room_num': 0, 'area': 0, 'contacts': {'phone': '---', 'vk': getVkId(offer)}, 'pics': picsarr(offer), 'descr': set_priority(offer['text']), 'metro': ['---'], 'url': "https://vk.com/wall-%s_%s" % (c, str(offer['id'])), 'loc': ["---"], 'adr': 'no_adress'})
                 except Exception as e:
                     alertExc()
                     pass
@@ -1105,6 +1122,36 @@ def vk(n):
         parse_vk_community(community, n)
         print("!!!!!!!!!!!!!1NOW WE PARSE",community)
 
+
+#=================================SEARCH VK FEED====================================
+
+SEARCH_PARS = ["квартиру", "комнату", "покомнатно", "койка-место"]
+WISHES = ["сдам "]
+
+def vkfeed(n):
+    p = Parse('vkfeed')
+    counter = 0
+    for par in SEARCH_PARS:
+        for wish in WISHES:
+            query = wish + par
+            
+            for i in range(0, n, 100):
+                offset = str(i)
+                adr = "https://api.vk.com/method/newsfeed.search?q=%s&count=100&access_token=732c7b09732c7b09732c7b090673709b7f7732c732c7b092a6093eafb623ad5547f142f&offset=%s" % (query, offset)
+                news = json.loads(requests.get(adr).text)['response']
+                
+                for offer in news[1:]:
+                    try:
+                        counter += 1
+                        p.write_status(counter)
+                        p.append({'date': str(strftime("%Y-%m-%d %H:%M:%S", gmtime(offer['date']))), 'cost': 0, 'room_num': 0, 'area': 0, 'contacts': {'phone': '---', 'vk': getVkId(offer)}, 'pics': picsarr(offer), 'descr': set_priority(offer['text']), 'metro': ['---'], 'url': "https://vk.com/wall%s_%s" % (str(offer['owner_id']), str(offer['id'])), 'loc': ["---"], 'adr': 'no_adress'})
+
+                    except Exception as e:
+                        alertExc()
+                        pass
+                    
+    p.add_date()
+    del p
     
 #===========================================OPTIMIZATION============================================#
 
@@ -1124,6 +1171,7 @@ def parse_it(name, maxprice):
     elif name == 'bezPosrednikov':
         bez_posrednikov(maxprice)
     elif name == 'vk':
+        vkfeed(maxprice)
         vk(maxprice)
 
     backup_db.upload()
