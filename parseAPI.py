@@ -1175,5 +1175,6 @@ def parse_it(name, maxprice):
         vk(maxprice)
 
     backup_db.upload()
+    print('backup_uploaded')
     
 
