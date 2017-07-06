@@ -2,6 +2,7 @@
 
 import dropbox
 from dropbox.files import WriteMode
+from botApi import alertBot
 
 REMOTE_ROOT = '/Приложения/hoROOMy/'
 TOKEN = 'RooTI79s2tAAAAAAAAAAL-6ZAv5-hU0vsILShL8XRDbRiQXgXpReUYd9p09b6l33'
@@ -25,6 +26,7 @@ class BackuppedFile:
 
     def upload(self):
         DBX.files_upload(self.fileBytes, self.DBXfilename, mode=WriteMode('overwrite'))
+        alertBot.sendMessage('uploaded db'+self.DBXfilename)
         
     def sync(self):
         print(self.filename)
