@@ -9,6 +9,7 @@ from driveAPI import BackuppedFile
 
 # when we start app.py
 
+db = DataBase('parseRes.db')
 #sync db
 
 backup_db = BackuppedFile('parseRes.db')
@@ -16,7 +17,6 @@ backup_db.sync()
 
 #------------------------------------------------------
 
-db = DataBase('parseRes.db')
 try:
     db.format()
 except:
