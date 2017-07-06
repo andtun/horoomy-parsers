@@ -32,5 +32,7 @@ class BackuppedFile:
         DBX.files_download_to_file(self.filename, self.DBXfilename, rev=None)
 
 
+backup_db = BackuppedFile('parseRes.db')
+
 if __name__ == "__main__":
-    BackuppedFile('parseRes.db').upload()
+    backup_db.upload()
