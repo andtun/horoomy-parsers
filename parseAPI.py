@@ -589,7 +589,7 @@ def kvartirant_room():
         pics = []
         temp = base.find('div', class_='text-center col-xs-12 obj-info').find('div', class_='bxContainer').find('ul').find_all('li')
         for li in temp:
-            pics.append(li.find('a').get('href'))
+            pics.append('http://www.kvartirant.ru'+li.find('a').get('href'))
 
         #loc 
         loc = []
@@ -637,7 +637,7 @@ def kvartirant_room():
     def realestate ():
         counter = 0
         maxprice = 30000
-        base_url = 'http://www.kvartirant.ru/Moskva/sniat-komnatu/'
+        base_url = 'http://www.kvartirant.ru/bez_posrednikov/Moskva/sniat-komnatu/'
         params = '&cost_limit={0}'.format(maxprice)
         template = 'http://www.kvartirant.ru'
         html = get_html(base_url)
