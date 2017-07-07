@@ -907,7 +907,7 @@ def bez_posrednikov(maxprice):
             if not (price is None):
                 price = price.find('div', {'class': 'field-item even'})
                 price = price.text.split()
-                price = int(price[0]) * 1000 + int(price[1])
+                price = int(price[0]) * 1000# + int(price[1])
             else:
                 price = 0
 

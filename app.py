@@ -74,12 +74,15 @@ def st():
     
 
 # start parse (ONE parser)
-@get("/special_parse/<parser_name>")
-def spp(parser_name):
-    maxprice = int(request.query.maxprice)
+@get("/special_parse")
+def spp():
+    #maxprice = int(request.query.maxprice)
+    maxprice = 15000
+    parser_name = request.query.parser_name
     t = threading.Thread(target = parse_it, args=(parser_name, maxprice,))
     t.daemon = True
     t.start()
+    redirect('/')
 
 
 # STOP PARSING (???)

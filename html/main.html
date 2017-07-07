@@ -34,12 +34,29 @@
 				r.onreadystatechange=function()
 				{
 					if (r.readyState == 4) {
+						var sppSelect = document.getElementById("sppSelector");
+
+						if (once == "OK") {
+						var opt = document.createElement('option');
+							 	opt.value = 'vk';
+							 	opt.innerHTML = 'vk';
+							 	sppSelect.appendChild(opt); }
+
 						parsers = JSON.parse(r.responseText);
 						parsers.forEach(function(parser, i) {
 							var divs = document.getElementById("parserdivs");
 							if (once == "OK") {
 							divs.innerHTML = divs.innerHTML + `<div><span style="margin-right: 20%; margin-left: 3%; display: inline-block; width: 30px;">`+parser+`:</span><span id="`+parser+`" style="margin-right: 3%; display: inline-block; width: 20%;">xtnf</span><button onclick="window.location = '/res/`+parser+`';">Просмотреть результаты</a></div>`;
+
+							if ((parser != "sdamsnimu") && (parser != "sdatsnyat") && (parser != "novoselie") && (parser != "rentm") && (parser != "vkfeed")) {
+							var opt = document.createElement('option');
+							 	opt.value = parser;
+							 	opt.innerHTML = parser;
+							 	sppSelect.appendChild(opt); }
+
 							 }
+
+
 
 						get(parser);
 						})
@@ -78,6 +95,12 @@
 <form action="/start_social" method="GET">
 <input type="number" name="num" placeholder="Записей для каждой группы" min="100" max="800" step="100" style="width: 200px;" required>
 <input type="submit" value="Начать парсинг ВК">
+</form><br><br>
+<form action="/special_parse" method="GET" id="sppForm">
+<select id="sppSelector" form="sppForm" name="parser_name" required>
+
+</select>
+<input type="submit" value="Начать тестовый запуск">
 </form>
 <!--<form action="javascript:restartServ();"><input type="submit" value="Stop parsing"></form>-->
 <!--<a style="margin: 15px;" href="/sync_db">Сохранить базу данных</a>--><!--<i><br>Внимание! Если не сохранить базу данных, сервер просто уничтожит её. <br> В следующих версиях сохранение будет производиться автоматически. <br> <b>На сохранение базы данных требуется время порядка минуты - оно не мгновенно.</b> <br> В течение этого времени сервер будет недоступен.</i>-->
