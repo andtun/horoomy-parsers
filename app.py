@@ -96,19 +96,14 @@ def st():
 # get parsed results
 @get("/res/<parser>")
 def res(parser):
-    p = DataBase('parseRes.db')
-    res = p.fetch("SELECT * FROM Results WHERE fromwhere = '%s';" % parser)
-    del p
-    return str(res)
+    return Parse(parser).get_results()
 
 
 # get stats for a parser
 @get("/parse_status/<parser>")
 def return_status(parser):
-    filename = Parse(parser).status_file
-    resp = static_file(filename, root='')
-    resp.set_header("Cache-Control", 'no-store, no-cache, must-revalidate, max-age=0')
-    return resp
+    #resp.set_header("Cache-Control", 'no-store, no-cache, must-revalidate, max-age=0')
+    return Parse(parser).get_status()
 
 
 # all parsers list
