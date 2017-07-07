@@ -17,13 +17,6 @@ backup_db = BackuppedFile('parseRes.db')    # BACKUP_DB IS EXPORTED AS A CONST
 backup_db.sync()
 
 
-def backupfunc():
-    try:
-        alertBot.sendMessage("backup started!")
-        backup_db.upload()
-        alertBot.sendMessage("backup finished!")
-    except:
-        alertExc()
 #------------------------------------------------------
 
 try:

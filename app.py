@@ -6,9 +6,10 @@ import json
 from multiprocessing import Process
 from parseAPI import parse_it
 from bottle import *
-from parser_class import Parse, backupfunc
+from parser_class import Parse
 from database import DataBase
 from botApi import tgExcCatch, alertExc
+from driveAPI import upload_db
 
 
 #-------------------------before run------------------------
@@ -161,7 +162,7 @@ def abc(a1, a2):
 @get("/sync_db")
 def snc():
     #try:
-    os.system('python driveAPIrun.py')
+    upload_db()
     redirect('/')
     #except:
      #   alertExc()

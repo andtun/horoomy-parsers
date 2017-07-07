@@ -11,7 +11,7 @@ from bs4 import BeautifulSoup
 from time import gmtime, strftime
 from parser_class import Parse, backup_db
 from datetime import datetime, timedelta
-from driveAPI import BackuppedFile
+from driveAPI import BackuppedFile, upload_db
 
 # set minmax price !!!!
 

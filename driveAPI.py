@@ -1,5 +1,6 @@
 # This Python file uses the following encoding: utf-8
 
+import os
 import dropbox
 from dropbox.files import WriteMode
 from botApi import alertBot
@@ -9,6 +10,10 @@ TOKEN = 'RooTI79s2tAAAAAAAAAAL-6ZAv5-hU0vsILShL8XRDbRiQXgXpReUYd9p09b6l33'
 DBX = dropbox.Dropbox(TOKEN)
 
 
+def upload_db():
+    os.system('python driveAPI.py')
+
+    
 class BackuppedFile:
     filename = ''
     DBXfilename = ''
