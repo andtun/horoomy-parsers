@@ -420,6 +420,7 @@ def kvartirant(maxprice):
 
     def kvartir (maxprice):
         # maxprice = 30000
+        p = Parse('kvartirant')
         base_url = 'http://www.kvartirant.ru/bez_posrednikov/Moskva/sniat-kvartiru/'
         params = '&cost_limit={0}&komnat[]=1&komnat[]=2&komnat[]=3'.format(maxprice)
         template = 'http://www.kvartirant.ru'
@@ -428,7 +429,6 @@ def kvartirant(maxprice):
         # out = []
         total_pages = get_total_pages(html)
         for page in range(total_pages)[1:]:
-            p = Parse('kvartirant')
             url = base_url + '?page=' + str(page) + params
             html = get_html(url)
             groups = get_objects_group(html)
@@ -449,13 +449,13 @@ def kvartirant(maxprice):
                             print('Daily')# | room_num more than 3 rooms | cost more than maxprice')
                     except Exception as e:
                         alertExc()
-            del p
+            #del p
             # with open('text.txt', 'w', encoding='utf-8') as out_file:
             #   out_file.write(str(out))
             # break 
 
         print('Done!')
-        p = Parse('kvartirant')
+        #p = Parse('kvartirant')
         p.add_date()
         #return out
         del p
@@ -676,7 +676,7 @@ def kvartirant_room():
 
 
 def parse_rentookiru(maxprice):
-
+    p = Parse('rentooki')
     # offers = []
     # Iterate page indexes
     page_index = 1
@@ -695,7 +695,6 @@ def parse_rentookiru(maxprice):
             break
 
         for link in links:
-            p = Parse('rentooki')
             try:
 
                 # Get offer page
@@ -795,10 +794,10 @@ def parse_rentookiru(maxprice):
             # Next page on next iteration
             page_index += 1
             p.write_status(page_index)
-            del p
+            #del p
 
     
-    p = Parse('rentooki')
+    #p = Parse('rentooki')
     p.add_date()
     del p
 
