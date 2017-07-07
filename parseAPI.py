@@ -1174,8 +1174,6 @@ def parse_it(name, maxprice):
         vkfeed(maxprice)
         vk(maxprice)
 
-    alertBot.sendMessage('backupStarted')
-    backup_db.upload()
-    print('backup_uploaded')
+    upload_db()
     
 
