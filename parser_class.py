@@ -5,6 +5,7 @@ import requests
 from database import DataBase
 from time import gmtime, strftime
 from driveAPI import BackuppedFile
+from botApi import alertExc, alertBot
 
 
 # when we start app.py
@@ -13,9 +14,16 @@ db = DataBase('parseRes.db')
 #sync db
 
 backup_db = BackuppedFile('parseRes.db')    # BACKUP_DB IS EXPORTED AS A CONST
-
 backup_db.sync()
 
+
+def backupfunc():
+    try:
+        alertBot.sendMessage("backup started!")
+        backup_db.upload()
+        alertBot.sendMessage("backup finished!")
+    except:
+        alertExc()
 #------------------------------------------------------
 
 try:

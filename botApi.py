@@ -20,7 +20,6 @@ ERROR_CHAT_ID = '273633310'
 alertBot = Bot(ERROR_CHAT_ID)
 
 
-
 # alerting an exception occured with the bot
 def alertExc():
     exc_type, exc_value, exc_traceback = sys.exc_info()

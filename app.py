@@ -2,9 +2,11 @@
 
 import threading
 import json
-from parseAPI import parse_it, backup_db
+#import driveAPI as dvp
+from multiprocessing import Process
+from parseAPI import parse_it
 from bottle import *
-from parser_class import Parse
+from parser_class import Parse, backupfunc
 from database import DataBase
 from botApi import tgExcCatch, alertExc
 
@@ -158,9 +160,12 @@ def abc(a1, a2):
 
 @get("/sync_db")
 def snc():
-    backup_db.upload()
+    #try:
+    os.system('python driveAPIrun.py')
     redirect('/')
-
+    #except:
+     #   alertExc()
+        
 # run the server
 
 run(host="0.0.0.0", port=os.environ.get('PORT', 5000))

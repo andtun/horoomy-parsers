@@ -4,7 +4,7 @@ import dropbox
 from dropbox.files import WriteMode
 from botApi import alertBot
 
-REMOTE_ROOT = '/Приложения/hoROOMy/'
+REMOTE_ROOT = '/'
 TOKEN = 'RooTI79s2tAAAAAAAAAAL-6ZAv5-hU0vsILShL8XRDbRiQXgXpReUYd9p09b6l33'
 DBX = dropbox.Dropbox(TOKEN)
 
@@ -33,6 +33,6 @@ class BackuppedFile:
         print(self.DBXfilename)
         DBX.files_download_to_file(self.filename, self.DBXfilename, rev=None)
 
-
+#alertBot.sendMessage(__name__)
 if __name__ == "__main__":
     BackuppedFile('parseRes.db').upload()
