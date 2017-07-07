@@ -64,7 +64,7 @@ class Parse:
         cmnd = "DELETE FROM Statuses WHERE name = '%s';" % self.name
         self.db.query(cmnd)
 
-        cmnd = "INSERT INTO Statuses VALUES ('%s', '%s')" % (self.name, status+' links processed')
+        cmnd = "INSERT INTO Statuses VALUES ('%s', '%s')" % (self.name, status)
         self.db.query(cmnd)
         
 
@@ -79,8 +79,11 @@ class Parse:
         return str(self.db.fetch(cmnd))
 
     def get_status(self):
+        try:
             cmnd = "SELECT status FROM Statuses WHERE name = '%s';" % self.name
             return self.db.fetch(cmnd)[0][0]
+        except:
+            return ''
 
     # appending to db (like to #a list)
     def append(self, data):       # working with db
