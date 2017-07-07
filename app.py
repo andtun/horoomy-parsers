@@ -138,7 +138,7 @@ def st():
 def clear():
     db = DataBase('parseRes.db')
     db.delete_table('Results')
-    db.format()
+    #db.format()
     del db
     redirect('/')
 

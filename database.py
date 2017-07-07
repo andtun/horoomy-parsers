@@ -64,7 +64,8 @@ status TEXT
             self.query(cmnd)
 
 
-
+if __name__ == "__main__":
+    DataBase('parseRes.db').format()
 
 
 
