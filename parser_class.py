@@ -64,7 +64,7 @@ class Parse:
         cmnd = "DELETE FROM Statuses WHERE name = '%s';" % self.name
         self.db.query(cmnd)
 
-        cmnd = "INSERT INTO Statuses VALUES ('%s', '%s')" % (self.name, status)
+        cmnd = "INSERT INTO Statuses VALUES ('%s', '%s')" % (self.name, str(status))
         self.db.query(cmnd)
         
 
