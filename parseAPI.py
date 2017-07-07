@@ -1036,7 +1036,10 @@ def bez_posrednikov(maxprice):
                     flat = parseOwner(advert_url)
                     flat['date'] = tr.find('div', {'class': 'date'}).text
                     flat['loc'] = ""
-                    p.append(flat)
+                    try:
+                        p.append(flat)
+                    except:
+                        pass
                     #print(flat['price'])
                     #print('price = %d, rooms = %d' % (flat['price'], flat['rooms_amount']))
                     #print(str(flat))
