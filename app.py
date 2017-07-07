@@ -20,20 +20,16 @@ PARSER_LIST = json.loads(open('parser_list.json', 'r').read())
 FORMAT_DIC = json.loads(open('alerts.json', 'r', encoding='utf-8').read())
 
 
-# creating all status files
+# creating all status rows
 for p in PARSER_LIST:
-    filename = "./statuses/"+p+".txt"
+    parsr = Parse(p)
     try:
-        f = open(filename, 'r')
-        if "last updated on:" not in f.read():
-            f.close()
-            f = open(filename, 'w')
-            f.write('last updated on: never')
-            f.close()
+        if 'links processed' in parsr.get_status():
+            parsr.write_status('last updated on: never')
     except:
-        f = open(filename, 'w')
-        f.write('last updated on: never')
-        f.close()
+        parsr.write_status('last updated on: never')
+        
+    del parsr
 
 #--------------------------server is here----------------------------
 

@@ -64,8 +64,9 @@ status TEXT
             self.query(cmnd)
 
 
-if __name__ == "__main__":
-    DataBase('parseRes.db').format()
+#if __name__ == "__main__":
+ #   for name in ["realEstate", "kvartirant", "rentooki", "bezPosrednikov", "sdamsnimu", "sdatsnyat", "rentm", "novoselie", "vkfeed"]:
+  #      DataBase('parseRes.db').query("insert into Statuses values ('%s', '4 links processed')" % name)
 
 
 
