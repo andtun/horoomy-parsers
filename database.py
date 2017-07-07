@@ -33,7 +33,8 @@ class DataBase:
 
     def format(self):
         # places - places of interest
-        cmnd = """
+        cmnd_list = ['' for i in range(2)]
+        cmnd_list[0] = """
 CREATE TABLE Results (
 num INTEGER PRIMARY KEY,
 cost INTEGER,
@@ -52,7 +53,15 @@ loc TEXT,
 fromwhere TEXT
 );
 """
-        self.query(cmnd)
+
+        cmnd_list[1] = """
+CREATE TABLE Statuses (
+name TEXT,
+status TEXT
+);
+"""
+        for cmnd in cmnd_list:
+            self.query(cmnd)
 
 
 

@@ -38,42 +38,49 @@ def evolve(a):
 # for optimizating work of all parsers
 class Parse:
     name = ""
-    status_key = ""
-    results_file = ""
+    #status_key = ""
+    #results_file = ""
     db = None
 
 
     def __init__ (self, name):
         self.name = name
-        self.status_file = "./statuses/" + name + ".txt"
-        self.results_file = "./results/" + name + ".json"
+        #self.status_file = "./statuses/" + name + ".txt"
+        #self.results_file = "./results/" + name + ".json"
         self.db = DataBase('parseRes.db')   # self db connection to enable multithreading
                                             # (MAYBE NO NEED FOR IT IN MULTIPROCESSING?)
 
 
-    def save_results(self, results):
+    """def save_results(self, results):
         res = json.dumps(results)
         f = open(self.results_file, 'a', encoding='utf-8')
         f.write(res)
-        f.close()
+        f.close()"""
 
 
     # for statistics abouth the number of links processed
     def write_status(self, status):
-        f = open(self.status_file, 'w', encoding='utf-8')
-        towrite = str(status) + " links processed"
-        f.write(towrite)
-        f.close()
+
+        cmnd = "DELETE FROM Statuses WHERE name = '%s';" % self.name
+        self.db.query(cmnd)
+
+        cmnd = "INSERT INTO Statuses VALUES ('%s', '%s')" % (self.name, status)
+        self.db.query(cmnd)
         
 
     # last updated on...
     def add_date(self):
         data = "last updated on: " + str(strftime("%Y-%m-%d %H:%M:%S", gmtime()))
-        f = open(self.status_file, 'w', encoding='utf-8')
-        f.write(data)
-        f.close()
+        self.write_status(data)
 
 
+    def get_results(self):
+        cmnd = "SELECT * FROM Results WHERE fromwhere = '%s';" % self.name
+        return str(self.db.fetch(cmnd))
+
+    def get_status(self):
+        cmnd = "SELECT status FROM Statuses WHERE name = '%s';" % self.name
+        return self.db.fetch(cmnd)[0][0]
 
     # appending to db (like to a list)
     def append(self, data):       # working with db
