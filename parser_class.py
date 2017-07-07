@@ -82,7 +82,7 @@ class Parse:
             cmnd = "SELECT status FROM Statuses WHERE name = '%s';" % self.name
             return self.db.fetch(cmnd)[0][0]
 
-    # appending to db (like to a list)
+    # appending to db (like to #a list)
     def append(self, data):       # working with db
 
 
