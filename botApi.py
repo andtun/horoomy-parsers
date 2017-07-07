@@ -28,9 +28,9 @@ def alertExc():
 
 # a decorator to catch&alert exceptions
 def tgExcCatch(func):
-    def wrapper(arg1, arg2):
+    def wrapper(arg1=None, arg2=None):
         try:
-            func(arg1, arg2)
+            func(arg1=None, arg2=None)
         except:
             alertExc()
 

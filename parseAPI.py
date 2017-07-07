@@ -841,104 +841,112 @@ def bez_posrednikov(maxprice):
 
 
     def parseOwner(advert_url):
-        print(url['home'] + advert_url)
+        # костыль для работы с декоратором, надо убрать
 
-        html = requests.get(url['home'] + advert_url).text
-        soup = BeautifulSoup(html, 'html5lib')
-        #print(soup, '------------------------')
-        content = soup.find('div', {'class': 'node-content'})
-        #print(content, '-----------------------')
-        content = content.find('div', {'id': 'node-obyavlenie-full-group-content'})
-        #print(content, '----------------------')
+        try:
+            
+            print(url['home'] + advert_url)
 
-        rooms_amount = content.find('section', {'class': 'field field-name-field-komnat field-type-list-text field-label-inline clearfix view-mode-full'})
-        if not (rooms_amount is None):
-            rooms_amount = rooms_amount.find('div', {'class': 'field-item even'})
-            rooms_amount = int(rooms_amount.text)
-        else:
-            rooms_amount = 0
+            html = requests.get(url['home'] + advert_url).text
+            soup = BeautifulSoup(html, 'html5lib')
+            #print(soup, '------------------------')
+            content = soup.find('div', {'class': 'node-content'})
+            #print(content, '-----------------------')
+            content = content.find('div', {'id': 'node-obyavlenie-full-group-content'})
+            #print(content, '----------------------')
 
-        subway = content.find('section', {'class': 'field field-name-field-metro field-type-taxonomy-term-reference field-label-inline clearfix view-mode-full'})
-        if not (subway is None):
-            subway = subway.find('li', {'class': 'field-item even'})
-            subway = [subway.text]
-        else:
-            subway = []
+            rooms_amount = content.find('section', {'class': 'field field-name-field-komnat field-type-list-text field-label-inline clearfix view-mode-full'})
+            if not (rooms_amount is None):
+                rooms_amount = rooms_amount.find('div', {'class': 'field-item even'})
+                rooms_amount = int(rooms_amount.text)
+            else:
+                rooms_amount = 0
 
-        to_subway = content.find('section', {'class': 'field field-name-field-min-do-metro field-type-number-integer field-label-inline clearfix view-mode-full'})
-        if not (to_subway is None):
-            to_subway = to_subway.find('div', {'class': 'field-item even'})
-            to_subway = to_subway.text
+            subway = content.find('section', {'class': 'field field-name-field-metro field-type-taxonomy-term-reference field-label-inline clearfix view-mode-full'})
+            if not (subway is None):
+                subway = subway.find('li', {'class': 'field-item even'})
+                subway = [subway.text]
+            else:
+                subway = []
 
-        adress = content.find('section', {'class': 'field field-name-field-adress field-type-text field-label-inline clearfix view-mode-full'})
-        if not (adress is None):
-            adress = adress.find('div', {'class': 'field-item even'})
-            adress = adress.text
+            to_subway = content.find('section', {'class': 'field field-name-field-min-do-metro field-type-number-integer field-label-inline clearfix view-mode-full'})
+            if not (to_subway is None):
+                to_subway = to_subway.find('div', {'class': 'field-item even'})
+                to_subway = to_subway.text
 
-        description = content.find('div', {'class': 'field field-name-body field-type-text-with-summary field-label-hidden view-mode-full'})
-        if not (description is None):
-            description = description.find('div', {'class': 'field-item even'})
-            description = description.text
+            adress = content.find('section', {'class': 'field field-name-field-adress field-type-text field-label-inline clearfix view-mode-full'})
+            if not (adress is None):
+                adress = adress.find('div', {'class': 'field-item even'})
+                adress = adress.text
 
-        features = content.find('section', {'class': 'field field-name-field-osobennosti field-type-list-text field-label-inline clearfix view-mode-full'})
-        if not (features is None):
-            features = features.find('div', {'class': 'field-item even'})
-            features = features.text
+            description = content.find('div', {'class': 'field field-name-body field-type-text-with-summary field-label-hidden view-mode-full'})
+            if not (description is None):
+                description = description.find('div', {'class': 'field-item even'})
+                description = description.text
 
-        full_square = content.find('section', {'class': 'field field-name-field-ploshad field-type-number-decimal field-label-inline clearfix view-mode-full'})
-        if not (full_square is None):
-            full_square = full_square.find('div', {'class': 'field-item even'})
-            full_square = full_square.text.split()
-            full_square = int(full_square[0])
-        else:
-            full_square = 0
+            features = content.find('section', {'class': 'field field-name-field-osobennosti field-type-list-text field-label-inline clearfix view-mode-full'})
+            if not (features is None):
+                features = features.find('div', {'class': 'field-item even'})
+                features = features.text
 
-        kitchen_square = content.find('section', {'class': 'field field-name-field-kuhnya field-type-number-decimal field-label-inline clearfix view-mode-full'})
-        if not (kitchen_square is None):
-            kitchen_square = kitchen_square.find('div', {'class': 'field-item even'})
-            kitchen_square = kitchen_square.text.split()
-            kitchen_square = int(kitchen_square[0])
+            full_square = content.find('section', {'class': 'field field-name-field-ploshad field-type-number-decimal field-label-inline clearfix view-mode-full'})
+            if not (full_square is None):
+                full_square = full_square.find('div', {'class': 'field-item even'})
+                full_square = full_square.text.split()
+                full_square = int(full_square[0])
+            else:
+                full_square = 0
 
-        price = content.find('section', {'class': 'field field-name-field-price field-type-number-integer field-label-inline clearfix view-mode-full'})
-        if not (price is None):
-            price = price.find('div', {'class': 'field-item even'})
-            price = price.text.split()
-            price = int(price[0]) * 1000 + int(price[1])
-        else:
-            price = 0
+            kitchen_square = content.find('section', {'class': 'field field-name-field-kuhnya field-type-number-decimal field-label-inline clearfix view-mode-full'})
+            if not (kitchen_square is None):
+                kitchen_square = kitchen_square.find('div', {'class': 'field-item even'})
+                kitchen_square = kitchen_square.text.split()
+                kitchen_square = int(kitchen_square[0])
 
-        contacts = content.find('section', {'class': 'field field-name-field-tel field-type-text field-label-inline clearfix view-mode-full'})
-        if not (contacts is None):
-            contacts = contacts.find('div', {'class': 'field-item even'})
-            contacts = contacts.text
+            price = content.find('section', {'class': 'field field-name-field-price field-type-number-integer field-label-inline clearfix view-mode-full'})
+            if not (price is None):
+                price = price.find('div', {'class': 'field-item even'})
+                price = price.text.split()
+                price = int(price[0]) * 1000 + int(price[1])
+            else:
+                price = 0
 
-        photos_ = content.find('div', {'class': 'field field-name-field-foto field-type-image field-label-hidden view-mode-full'})
-        photos = list()
-        if not (photos_ is None):
-            photos_ = photos_.find('div', {'class': 'field-items'})
-            for a in photos_:
-                photos.append(a.a['href'])
+            contacts = content.find('section', {'class': 'field field-name-field-tel field-type-text field-label-inline clearfix view-mode-full'})
+            if not (contacts is None):
+                contacts = contacts.find('div', {'class': 'field-item even'})
+                contacts = contacts.text
+
+            photos_ = content.find('div', {'class': 'field field-name-field-foto field-type-image field-label-hidden view-mode-full'})
+            photos = list()
+            if not (photos_ is None):
+                photos_ = photos_.find('div', {'class': 'field-items'})
+                for a in photos_:
+                    photos.append(a.a['href'])
 
 
-        #print('FINISH; PRICE = %d' % price)
-        #print(full_square)
-        #print(rooms_amount, to_subway, subway)
+            #print('FINISH; PRICE = %d' % price)
+            #print(full_square)
+            #print(rooms_amount, to_subway, subway)
 
-        flat = dict()
-        flat['room_num'] = rooms_amount
-        flat['metro'] = subway
-        flat['to_subway'] = to_subway
-        flat['adr'] = adress
-        flat['descr'] = description
-        flat['features'] = features
-        flat['area'] = full_square
-        flat['kitchen_square'] = kitchen_square
-        flat['cost'] = price
-        flat['contacts'] = {'phone': contacts}
-        flat['pics'] = photos
-        flat['url'] = url['home'] + advert_url
+            flat = dict()
+            flat['room_num'] = rooms_amount
+            flat['metro'] = subway
+            flat['to_subway'] = to_subway
+            flat['adr'] = adress
+            flat['descr'] = description
+            flat['features'] = features
+            flat['area'] = full_square
+            flat['kitchen_square'] = kitchen_square
+            flat['cost'] = price
+            flat['contacts'] = {'phone': contacts}
+            flat['pics'] = photos
+            flat['url'] = url['home'] + advert_url
+            flat['loc'] = ""
 
-        return flat
+            return flat
+        
+        except:
+            alertExc()
 
 
     # Здесь я начал переписывать по красоте parseOwnerList, но так и не закончил; вроде как здесь есть какая-то бага:
@@ -1034,11 +1042,11 @@ def bez_posrednikov(maxprice):
 
                 if not (url['daiy'] in advert_url):
                     flat = parseOwner(advert_url)
-                    flat['date'] = tr.find('div', {'class': 'date'}).text
-                    flat['loc'] = ""
                     try:
+                        flat['date'] = tr.find('div', {'class': 'date'}).text
                         p.append(flat)
                     except:
+                        alertExc()
                         pass
                     #print(flat['price'])
                     #print('price = %d, rooms = %d' % (flat['price'], flat['rooms_amount']))
@@ -1157,7 +1165,7 @@ def vkfeed(n):
     
 #===========================================OPTIMIZATION============================================#
 
-@tgExcCatch
+#@tgExcCatch
 def parse_it(name, maxprice):
     #print("!!!!!!!!!!!!!!!!!!!!!!!!!", name)
     if name == 'cian':
