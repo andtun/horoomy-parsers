@@ -33,8 +33,8 @@ class DataBase:
 
     def format(self):
         # places - places of interest
-        cmnd_list = ['' for i in range(2)]
-        cmnd_list[0] = """
+        cmnd_list = []
+        cmnd_list.append("""
 CREATE TABLE Results (
 num INTEGER PRIMARY KEY,
 cost INTEGER,
@@ -52,22 +52,36 @@ prooflink TEXT,
 loc TEXT,
 fromwhere TEXT
 );
-"""
+""")
 
-        cmnd_list[1] = """
+        cmnd_list.append("""
 CREATE TABLE Statuses (
 name TEXT,
 status TEXT
 );
-"""
+""")
+
+        cmnd_list.append("""
+CREATE TABLE Snimu (
+num INTEGER PRIMARY KEY,
+cost INTEGER,
+room_num INTEGER,
+metro TEXT,
+phone TEXT,
+contacts TEXT,
+prooflink TEXT,
+pics TEXT,
+descr TEXT
+);
+""")
         for cmnd in cmnd_list:
             self.query(cmnd)
 
 
-#if __name__ == "__main__":
+if __name__ == "__main__":
  #   for name in ["realEstate", "kvartirant", "rentooki", "bezPosrednikov", "sdamsnimu", "sdatsnyat", "rentm", "novoselie", "vkfeed"]:
   #      DataBase('parseRes.db').query("insert into Statuses values ('%s', '4 links processed')" % name)
-
+    DataBase('parseRes.db').format()
 
 
 

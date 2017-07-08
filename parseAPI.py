@@ -13,75 +13,7 @@ from parser_class import Parse, backup_db
 from datetime import datetime, timedelta
 from driveAPI import BackuppedFile, upload_db
 
-# set minmax price !!!!
 
-
-        
-def cian(maxprice):
-    
-    def getinf(url):
-        all_images = []
-        html = requests.get(url).text
-        soup = BeautifulSoup(html, "html5lib")
-        infa = soup.find("div", {"class": "fotorama"})
-        if infa == None:
-            all_images = ["No Images"]
-            return all_images
-        else:
-            images = infa.findAll("img")
-            for i in images:
-                x = i.get("src")
-                all_images.append(x)
-            return all_images
-
-
-    url = "https://map.cian.ru/ajax/map/roundabout/?deal_type=rent&engine_version=2&offer_type=flat&region=1&room1=1&room2=1&room3=1&maxprice=" + str(maxprice)
-    p = Parse("cian")
-    link_template = 'https://cian.ru/rent/flat/'
-
-    #f = open("pres.txt", 'w')
-    #f.write("Parsing right now, check your logs")
-    #f.close()
-
-    # { 'room_num': "", 'metro': [список с ближайшими станциями метро], 'pics': [список с фото квартиры],
-    #  cost: "цена квартиры", floor: "этаж", phone: "телефон хозяина", furn: True/False, loc: [координаты],
-    #  long: True/False, agent: True/False}
-
-    all_infa = []
-    html = requests.get(url).text
-    json_text = json.loads(html)
-    infa = json_text["data"]["points"]
-    
-    count = 0
-    for i in infa:
-        main = infa[i]
-        offers = main["offers"]
-        
-        for j in offers:
-            room_num = j['property_type']
-            price = j['price_rur']
-            floor = j["link_text"][3]
-            floor = floor[floor.find(" ") + 1:]
-            flat_id = j["id"]
-            print("I'm still processing")
-            
-        url = link_template + flat_id
-        all_pics = getinf(url)
-
-        print(url)
-        count += 1
-        p.write_status(count)
-        
-        x = {'room_num': room_num, 'metro': [], 'pics': all_pics,
-         "cost": price, "floor": floor, "contacts": {"phone": "телефон"}, "furn": None, "loc": i.replace(' ', ','),
-         "long": None, "agent": None, "link": url}
-        p.save_results(x)
-        
-    print("ALL INFA WRITTEN")
-    p.add_date()
-
-
-# ===========================================================================================================
 
 def realestate(maxprice):
     
@@ -840,9 +772,10 @@ def bez_posrednikov(maxprice):
     url['daiy'] = 'snyat-posutochno'
 
 
-    def parseOwner(advert_url):
-        # костыль для работы с декоратором, надо убрать
 
+    def parseOwner(advert_url):     # mode=0 - parse owner "sdam"; mode=1 - parse renter "snimu"
+        
+        # костыль для работы без декоратора, надо убрать
         try:
             
             print(url['home'] + advert_url)
@@ -862,6 +795,13 @@ def bez_posrednikov(maxprice):
             else:
                 rooms_amount = 0
 
+            photos_ = content.find('div', {'class': 'field field-name-field-foto field-type-image field-label-hidden view-mode-full'})
+            photos = list()
+            if not (photos_ is None):
+                photos_ = photos_.find('div', {'class': 'field-items'})
+                for a in photos_:
+                    photos.append(a.a['href'])
+
             subway = content.find('section', {'class': 'field field-name-field-metro field-type-taxonomy-term-reference field-label-inline clearfix view-mode-full'})
             if not (subway is None):
                 subway = subway.find('li', {'class': 'field-item even'})
@@ -874,21 +814,6 @@ def bez_posrednikov(maxprice):
                 to_subway = to_subway.find('div', {'class': 'field-item even'})
                 to_subway = to_subway.text
 
-            adress = content.find('section', {'class': 'field field-name-field-adress field-type-text field-label-inline clearfix view-mode-full'})
-            if not (adress is None):
-                adress = adress.find('div', {'class': 'field-item even'})
-                adress = adress.text
-
-            description = content.find('div', {'class': 'field field-name-body field-type-text-with-summary field-label-hidden view-mode-full'})
-            if not (description is None):
-                description = description.find('div', {'class': 'field-item even'})
-                description = description.text
-
-            features = content.find('section', {'class': 'field field-name-field-osobennosti field-type-list-text field-label-inline clearfix view-mode-full'})
-            if not (features is None):
-                features = features.find('div', {'class': 'field-item even'})
-                features = features.text
-
             full_square = content.find('section', {'class': 'field field-name-field-ploshad field-type-number-decimal field-label-inline clearfix view-mode-full'})
             if not (full_square is None):
                 full_square = full_square.find('div', {'class': 'field-item even'})
@@ -896,12 +821,6 @@ def bez_posrednikov(maxprice):
                 full_square = int(full_square[0])
             else:
                 full_square = 0
-
-            kitchen_square = content.find('section', {'class': 'field field-name-field-kuhnya field-type-number-decimal field-label-inline clearfix view-mode-full'})
-            if not (kitchen_square is None):
-                kitchen_square = kitchen_square.find('div', {'class': 'field-item even'})
-                kitchen_square = kitchen_square.text.split()
-                kitchen_square = int(kitchen_square[0])
 
             price = content.find('section', {'class': 'field field-name-field-price field-type-number-integer field-label-inline clearfix view-mode-full'})
             if not (price is None):
@@ -916,12 +835,26 @@ def bez_posrednikov(maxprice):
                 contacts = contacts.find('div', {'class': 'field-item even'})
                 contacts = contacts.text
 
-            photos_ = content.find('div', {'class': 'field field-name-field-foto field-type-image field-label-hidden view-mode-full'})
-            photos = list()
-            if not (photos_ is None):
-                photos_ = photos_.find('div', {'class': 'field-items'})
-                for a in photos_:
-                    photos.append(a.a['href'])
+            description = content.find('div', {'class': 'field field-name-body field-type-text-with-summary field-label-hidden view-mode-full'})
+            if not (description is None):
+                description = description.find('div', {'class': 'field-item even'})
+                description = description.text
+
+            adress = content.find('section', {'class': 'field field-name-field-adress field-type-text field-label-inline clearfix view-mode-full'})
+            if not (adress is None):
+                adress = adress.find('div', {'class': 'field-item even'})
+                adress = adress.text
+
+            features = content.find('section', {'class': 'field field-name-field-osobennosti field-type-list-text field-label-inline clearfix view-mode-full'})
+            if not (features is None):
+                features = features.find('div', {'class': 'field-item even'})
+                features = features.text
+
+            kitchen_square = content.find('section', {'class': 'field field-name-field-kuhnya field-type-number-decimal field-label-inline clearfix view-mode-full'})
+            if not (kitchen_square is None):
+                kitchen_square = kitchen_square.find('div', {'class': 'field-item even'})
+                kitchen_square = kitchen_square.text.split()
+                kitchen_square = int(kitchen_square[0])
 
 
             #print('FINISH; PRICE = %d' % price)
@@ -993,9 +926,10 @@ def bez_posrednikov(maxprice):
 
 
 
-    def parseOwnerList():
+    def parseOwnerList(b_url):
         try:
-            html_pages = requests.get(url['owners table'] + '0').text
+            html_pages = requests.get(b_url + '0').text
+            #print(html_pages)
         except:
             print('Whoops! Somethind went wrong. Error 1')
             return None
@@ -1014,7 +948,7 @@ def bez_posrednikov(maxprice):
 
             try:
                 #html = requests.get(url_start + str('page') + url_end).text
-                full_url = '%s%d' % (url['owners table'], page)
+                full_url = '%s%d' % (b_url, page)
                 #full_url = url['owners table'] + str(page)
                 print(full_url)
                 html = requests.get(full_url).text
@@ -1044,7 +978,10 @@ def bez_posrednikov(maxprice):
                     flat = parseOwner(advert_url)
                     try:
                         flat['date'] = tr.find('div', {'class': 'date'}).text
-                        p.append(flat)
+                        if b_url == url['owners table']:
+                            p.append(flat)
+                        else:
+                            p.append_snimu(flat)
                     except:
                         alertExc()
                         pass
@@ -1053,10 +990,206 @@ def bez_posrednikov(maxprice):
                     #print(str(flat))
 
 
-    parseOwnerList()
+    for b_url in [url['owners table'], url['renters table']]:
+        parseOwnerList(b_url)
+        
     p.add_date()
     del p
 
+
+
+
+#============================================CIAN==CIAN====================================
+
+
+import requests
+import json
+from bs4 import BeautifulSoup
+
+
+def cian(maxprice):
+    headers = {
+        'User-Agent': 'My User Agent 1.0',
+        'From': 'youremail@domain.com'  # This is another valid field
+    }
+
+    def getsoup(url):
+        html = requests.get(url).text
+        soup = BeautifulSoup(html, "html5lib")
+        return soup
+
+    def getarea(soup):
+        area_info = soup.find("table", {"class": "object_descr_props"})
+        if area_info is None:
+            area = "No info"
+            return area
+        else:
+            area_tr = area_info.findAll("tr")
+            area = area_tr[2].text
+            integ = []
+            i = 0
+            while i < len(area):
+                area_int = ''
+                a = area[i]
+                while '0' <= a <= '9':
+                    area_int += a
+                    i += 1
+                    if i < len(area):
+                        a = area[i]
+                    else:
+                        break
+                i += 1
+                if area_int != '':
+                    integ.append(int(area_int))
+            try:
+                area = integ[0]
+                return area
+            except IndexError:
+                area = "No info"
+                return area
+
+
+    def getadr(soup):
+        adr_info = soup.find("h1", {"class": "object_descr_addr"})
+        if adr_info is None:
+            adr = "Error"
+            return adr
+        else:
+            adr = adr_info.text
+            return adr
+
+    def getpics(soup):
+        all_images = []
+        infa = soup.find("div", {"class": "fotorama"})
+        if infa == None:
+            all_images = ["No Images"]
+            return all_images
+        else:
+            images = infa.findAll("img")
+            for i in images:
+                x = i.get("src")
+                all_images.append(x)
+            return all_images
+
+    def getmetro(soup):
+        all_metro = []
+        metro_infa = soup.findAll("a", {"class": "object_item_metro_name"})
+        if metro_infa is None:
+            all_metro = ["No metro near"]
+            return all_metro
+        else:
+            for i in metro_infa:
+                metro = i.text[:-1]
+                all_metro.append(metro)
+                return all_metro
+
+    def getphone(soup):
+        ph_infa = soup.find("div", {"class": "cf_offer_show_phone-number cf_offer_show_phone-number--under_price"})
+        if ph_infa is None:
+            phone = "No Phone"
+            return  phone
+        else:
+            phone = ph_infa.find("a").text
+            return phone
+
+    def getdescr(soup):
+        descr_info = soup.find("div", {"class": "object_descr_text"})
+        if descr_info is None:
+            descr = "No descr"
+            return  descr
+        else:
+            descr_info = str(descr_info)[1:]
+            bord_r = descr_info.find("<")
+            bord_l = descr_info.find(">")
+            descr = descr_info[bord_l+1:bord_r]
+            return descr
+
+    def getpersonname(soup):
+        person_name_info = soup.find("h3", {"class": "realtor-card__title"})
+        if person_name_info is None:
+            person_name = "no name"
+            return person_name
+        else:
+            try:
+                person_name = person_name_info.find("a").text
+                return person_name
+            except AttributeError:
+                person_name = soup.find("h3", {"class": "realtor-card__title"}).text
+                return person_name
+
+    def getdate(soup):
+        return soup.find("span", {'class': "object_descr_dt_added"}).text
+
+
+    def inffromapi():
+        p = Parse('cian')
+        counter = 0
+        #all_infa = []
+        link_template = 'https://cian.ru/rent/flat/'
+        url = ["https://map.cian.ru/ajax/map/roundabout/?currency=2&deal_type=rent&engine_version=2&type=-2&maxprice=35000&offer_type=flat&region=1&wp=1&room1=1&p=",
+               "https://map.cian.ru/ajax/map/roundabout/?currency=2&deal_type=rent&engine_version=2&type=-2&maxprice=45000&offer_type=flat&region=1&wp=1&room2=1&p=",
+               "https://map.cian.ru/ajax/map/roundabout/?currency=2&deal_type=rent&engine_version=2&type=-2&maxprice=55000&offer_type=flat&region=1&wp=1&room3=1&p="]
+        for mainurl in url:
+            for num in range(1, 6):
+                url = mainurl + str(num)
+
+                # { 'room_num': "", 'metro': [список с ближайшими станциями метро], 'pics': [список с фото квартиры],
+                #  cost: "цена квартиры", floor: "этаж", phone: "телефон хозяина", furn: True/False, loc: [координаты],
+                #  long: True/False, agent: True/False}
+
+                html = requests.get(url).text
+                try:
+                    json_text = json.loads(html)
+                except json.decoder.JSONDecodeError:
+                    print("json error")
+                    break
+                if "data" in json_text:
+                    infa = json_text["data"]
+                    if "points" in infa:
+                        infa = infa["points"]
+                        for i in infa:
+                            main = infa[i]
+                            offers = main["offers"]
+                            for j in offers:
+                                room_num = j['property_type']
+                                price = int(j['price_rur'][:-2])
+                                floor = j["link_text"][3]
+                                floor = floor[floor.find(" ") + 1:]
+                                flat_id = j["id"]
+                            url = link_template + flat_id
+                            loc = i.replace(" ", ",")
+
+                            # print(url)
+                            # print(loc)
+
+                            # ======
+                            soup = getsoup(url)
+                            all_pics = getpics(soup)
+                            all_metro = getmetro(soup)
+                            phone = getphone(soup)
+                            adr = getadr(soup)
+                            area = getarea(soup)
+                            descr = getdescr(soup)
+                            person_name = getpersonname(soup)
+                            date = getdate(soup)
+                            print(date)
+                            # ======
+
+                            x = {'room_num': room_num, 'metro': all_metro, 'pics': all_pics,
+                             "cost": price, "floor": floor, "contacts": {"phone": phone, "person_name": person_name}, "loc": loc,
+                             "url": url, "area": area, "adr": adr, "descr": descr, "date": date}
+
+                            p.append(x)
+                            counter += 1
+                            p.write_status(counter)
+                            #print(x)
+                p.add_date()
+                del p
+                #return all_infa
+            
+    inffromapi()
+
+    
 
 #===================================================================================================#
                                     # WORKING WITH SOCIAL NETWORKS #
@@ -1185,5 +1318,7 @@ def parse_it(name, maxprice):
         vk(maxprice)
 
     upload_db()
-    
+
+if __name__ == "__main__":
+    bez_posrednikov(35000)
 
