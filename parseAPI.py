@@ -1117,8 +1117,20 @@ def cian(maxprice):
                 person_name = soup.find("h3", {"class": "realtor-card__title"}).text
                 return person_name
 
-    def getdate(soup):
-        return soup.find("span", {'class': "object_descr_dt_added"}).text
+    def getposttime(soup):
+        infa = soup.find("div", {"class": "object_descr_dt_row"})
+        if infa is None:
+            posttime = ""
+            return posttime
+        else:
+            try:
+                posttime = str(infa.find("span", {"class": "object_descr_dt_added"}).a)
+                posttime = json.loads(posttime[posttime.find('{'):posttime.rfind('}')+1])['publication_date']
+                posttime = strftime("%Y-%m-%d %H:%M:%S", gmtime(posttime))
+                return  posttime
+            except AttributeError:
+                posttime = ""
+                return posttime
 
 
     def inffromapi():
@@ -1171,8 +1183,8 @@ def cian(maxprice):
                             area = getarea(soup)
                             descr = getdescr(soup)
                             person_name = getpersonname(soup)
-                            date = getdate(soup)
-                            print(date)
+                            date = getposttime(soup)
+                            #print(date)
                             # ======
 
                             x = {'room_num': room_num, 'metro': all_metro, 'pics': all_pics,
@@ -1180,6 +1192,7 @@ def cian(maxprice):
                              "url": url, "area": area, "adr": adr, "descr": descr, "date": date}
 
                             p.append(x)
+                            #print(x)
                             counter += 1
                             p.write_status(counter)
                             #print(x)
@@ -1320,5 +1333,5 @@ def parse_it(name, maxprice):
     upload_db()
 
 if __name__ == "__main__":
-    bez_posrednikov(35000)
+    cian(35000)
 
