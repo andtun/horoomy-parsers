@@ -74,6 +74,10 @@ pics TEXT,
 descr TEXT
 );
 """)
+
+        cmnd_list.append("CREATE TABLE alerts (format_dic TEXT);")
+
+
         for cmnd in cmnd_list:
             self.query(cmnd)
 
@@ -81,7 +85,9 @@ descr TEXT
 if __name__ == "__main__":
  #   for name in ["realEstate", "kvartirant", "rentooki", "bezPosrednikov", "sdamsnimu", "sdatsnyat", "rentm", "novoselie", "vkfeed"]:
   #      DataBase('parseRes.db').query("insert into Statuses values ('%s', '4 links processed')" % name)
-    DataBase('parseRes.db').format()
+    #DataBase('parseRes.db').format()
+    DataBase('parseRes.db').query("""insert into alerts values ('''%s''')""" % '''{"version": "0.0.9.130", "added": "---", "othertext": ""}''')
+    print(DataBase('parseRes.db').fetch("SELECT * FROM alerts;")[0][0])
 
 
 

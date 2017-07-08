@@ -17,7 +17,8 @@ from driveAPI import upload_db
 # info kept in txt files
 # KEEP IT IN THE DB!!! (?) - for alerts -- yes, to be always synced!
 PARSER_LIST = json.loads(open('parser_list.json', 'r').read())
-FORMAT_DIC = json.loads(open('alerts.json', 'r', encoding='utf-8').read())
+#print(DataBase('parseRes.db').fetch("SELECT * FROM alerts;")[0][0][1:-1])
+FORMAT_DIC = json.loads(DataBase('parseRes.db').fetch("SELECT * FROM alerts;")[0][0][1:-1])
 
 
 # creating all status rows
@@ -52,9 +53,7 @@ def change():
     for param in request.query:
         if request.query[param] != "":
             FORMAT_DIC[param] = request.query[param]
-    f = open('alerts.json', 'w', encoding='utf-8')
-    f.write(json.dumps(FORMAT_DIC, ensure_ascii=False))
-    f.close()
+    DataBase('parseRes.db').query("""INSERT INTO alerts VALUES ('''%s''');""" % json.dumps(FORMAT_DIC, ensure_ascii=False))
     redirect("/adm/main")
     
 
