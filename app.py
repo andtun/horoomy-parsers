@@ -56,7 +56,9 @@ def change():
     for param in request.query:
         if request.query[param] != "":
             FORMAT_DIC[param] = request.query[param]
-    DataBase('parseRes.db').query("""INSERT INTO alerts VALUES ('''%s''');""" % json.dumps(FORMAT_DIC, ensure_ascii=False))
+    db = DataBase('parseRes.db')
+    db.query("DELETE FROM alerts;") # clear alerts
+    db.query("""INSERT INTO alerts VALUES ('''%s''');""" % str(json.dumps(FORMAT_DIC, ensure_ascii=False)).encode('utf-8'))
     redirect("/adm/main")
     
 
