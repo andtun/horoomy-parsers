@@ -36,12 +36,6 @@
 					if (r.readyState == 4) {
 						var sppSelect = document.getElementById("sppSelector");
 
-						if (once == "OK") {
-						var opt = document.createElement('option');
-							 	opt.value = 'vk';
-							 	opt.innerHTML = 'vk';
-							 	sppSelect.appendChild(opt); }
-
 						parsers = JSON.parse(r.responseText);
 						parsers.forEach(function(parser, i) {
 							var divs = document.getElementById("parserdivs");

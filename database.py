@@ -36,7 +36,7 @@ class DataBase:
         cmnd_list = []
         cmnd_list.append("""
 CREATE TABLE Results (
-num INTEGER PRIMARY KEY,
+hash TEXT,
 cost INTEGER,
 room_num INTEGER,
 area INTEGER,
@@ -63,7 +63,7 @@ status TEXT
 
         cmnd_list.append("""
 CREATE TABLE Snimu (
-num INTEGER PRIMARY KEY,
+hash TEXT,
 cost INTEGER,
 room_num INTEGER,
 metro TEXT,
@@ -85,9 +85,9 @@ descr TEXT
 if __name__ == "__main__":
  #   for name in ["realEstate", "kvartirant", "rentooki", "bezPosrednikov", "sdamsnimu", "sdatsnyat", "rentm", "novoselie", "vkfeed"]:
   #      DataBase('parseRes.db').query("insert into Statuses values ('%s', '4 links processed')" % name)
-    #DataBase('parseRes.db').format()
-    DataBase('parseRes.db').query("""insert into alerts values ('''%s''')""" % '''{"version": "0.0.9.130", "added": "---", "othertext": ""}''')
-    print(DataBase('parseRes.db').fetch("SELECT * FROM alerts;")[0][0])
+    DataBase('parseRes.db').format()
+    #DataBase('parseRes.db').query("""insert into alerts values ('''%s''')""" % '''{"version": "0.0.9.130", "added": "---", "othertext": ""}''')
+    #print(DataBase('parseRes.db').fetch("SELECT * FROM alerts;")[0][0])
 
 
 

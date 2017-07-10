@@ -6,7 +6,8 @@ import json
 import time
 import datetime
 import threading
-from botApi import alertExc, tgExcCatch, alertBot
+from datetime import date as datetimedate
+from botApi import alertExc, tgExcCatch, alertBot, tgExcnoargs
 from bs4 import BeautifulSoup
 from time import gmtime, strftime
 from parser_class import Parse, backup_db
@@ -145,7 +146,7 @@ def realestate(maxprice):
 
 
 
-
+    @tgExcnoargs
     def realest(maxprice):
         maxprice = int(maxprice)
         p = Parse('realEstate')
@@ -1202,8 +1203,225 @@ def cian(maxprice):
             
     inffromapi()
 
-    
 
+#=========================================POSREDNIKOVZDES-NET=======================================
+
+#---------------------------------------------SDAM-----------------------------------------
+
+@tgExcnoargs    
+def posrednikovnetSdam():
+    def delliter(stri):
+        while True:
+            l = stri.find('<')
+            g = stri.find('>')
+            delit = stri[l:g + 1]
+            if delit == '<br/>':
+                stri = stri.replace(delit, '\n')
+            else:
+                stri = stri.replace(delit, '')
+
+            if l == -1:
+                break
+        return stri
+
+
+
+    #ALL_OFFERS = []
+    p = Parse('posrednikovNet')
+    counter = 0
+    u = 'http://msk.posrednikovzdes.net/adv.php?city=73&oper=3&price1=0&price2=11'
+    text = requests.get(u).text
+    soup = BeautifulSoup(text, "lxml")
+    table = soup.find('table', {'class': 'tab'})
+    tr = table.find_all('tr')  # [/// , /// , ///]
+    for i in tr:
+        td = i.find_all('td')
+        if len(td) == 9:
+            dat = delliter(str(td[1]))
+            idd = dat[dat.find('№') + 1:]
+            # print(id)
+            url = 'http://msk.posrednikovzdes.net/offer.php?id=%s' % idd
+            # print(url)
+
+            dat = dat[:dat.find('№')]
+            dat = re.sub(r'\d\d:\d\d:\d\d', '', dat)
+            if "Сегодня" in dat:
+                dat = datetimedate.today().strftime("%d.%m.%Y")
+            elif "Вчера" in dat:
+                yesterday = datetimedate.today() - datetime.timedelta(1)
+                dat = yesterday.strftime("%d.%m.%Y")
+            # print(dat)
+
+            obj = delliter(str(td[2]))
+            obj = obj.split('\n')
+            distr = None
+            street = None
+            metro = None
+            for j in range(len(obj)):
+                obj[j] = re.sub(r'\xa0|\t|\r', '', obj[j])
+                if 'Район' in obj[j]:
+                    distr = obj[j]
+                if "Улица" in obj[j]:
+                    street = obj[j]
+                if 'Метро' in obj[j]:
+                    metro = obj[j]
+            room = obj[1]
+            # print(room, distr, street, metro, sep='||')
+
+            pay = delliter(str(td[3]))
+            pay = re.sub(r'\xa0|\t|\r', '', pay).split('\n')
+            payment = pay[0] + pay[1] + pay[2]
+            payment = re.sub(r'Помесячно| |Предоплата', '', payment)
+            if 'тыс.руб.' in payment:
+                payment = re.sub(r'тыс\.руб\.', '', payment)
+                if '.' in payment:
+                    payment = payment.replace('.', '')
+                    payment += '00'
+                else:
+                    payment += '000'
+            elif 'руб.' in payment:
+                payment = re.sub(r'руб\.', '', payment)
+            #print(payment)
+
+            floor = delliter(str(td[4]))
+            # print(floor)
+
+            area = delliter(str(td[5]))
+            # print(area)
+
+            descript = td[7].find('span', {'style': "color:#CC0000; "}).text
+            # print(descript)
+
+            phone = delliter(str(td[7]))
+            phone = re.sub(r'\xa0|\t|\r', '', phone).split('\n')
+            for z in phone:
+                if "Контакты" in z:
+                    ph = z[z.find('+'):]
+                    ph = ph[:17]
+                    
+            try:
+                area = list(area.split('\n'))
+                area = area[area.index('Общ.')+1]
+                area = area[:area.find(' ')]
+            except:
+                area = 0
+
+            print(area)
+            
+            
+            x = {'room_num': room, 'metro': metro, 'pics': None,
+                 "cost": payment, "floor": floor, "contacts": dict(phone=ph, person_name=None), "loc": None,
+                 "url": url, "date": dat, "area": area, "adr": str(distr) + " " + str(street), "descr": descript}
+            p.append(x)
+            counter += 1
+            p.write_status(counter)
+            #print('[+]')
+            #time.sleep(1)
+    p.add_date()
+    del p
+
+#---------------------------------------------SNIMU------------------------------------------------
+
+@tgExcnoargs
+def posrednikovnetSnimu():
+
+    def delliter(stri):
+        while True:
+            l = stri.find('<')
+            g = stri.find('>')
+            delit = stri[l:g + 1]
+            if delit == '<br/>':
+                stri = stri.replace(delit, '\n')
+            else:
+                stri = stri.replace(delit, '')
+
+            if l == -1:
+                break
+        return stri
+
+
+
+    #ALL_OFFERS = []
+    p = Parse('posrednikovNet')
+    counter = 0
+    u = 'http://msk.posrednikovzdes.net/adv.php?city=73&oper=4'
+    text = requests.get(u).text
+    soup = BeautifulSoup(text, "lxml")
+    table = soup.find('table', {'class': 'tab'})
+    tr = table.find_all('tr')  # [/// , /// , ///]
+    for i in tr:
+        td = i.find_all('td')
+        if len(td) == 9:
+            dat = delliter(str(td[1]))
+            idd = dat[dat.find('№') + 1:]
+            idd = re.sub(r' ', '', idd)
+            # print(idd)
+            url = 'http://msk.posrednikovzdes.net/offer.php?id=%s' % idd
+            # print(url)
+
+            dat = dat[:dat.find('№')]
+            dat = re.sub(r'\d\d:\d\d:\d\d', '', dat)
+            if "Сегодня" in dat:
+                dat = datetimedate.today().strftime("%d.%m.%Y")
+            elif "Вчера" in dat:
+                yesterday = datetimedate.today() - datetime.timedelta(1)
+                dat = yesterday.strftime("%d.%m.%Y")
+            # print(dat)
+
+            obj = delliter(str(td[2]))
+            obj = obj.split('\n')
+            distr = None
+            metro = None
+            for j in range(len(obj)):
+                obj[j] = re.sub(r'\xa0|\t|\r', '', obj[j])
+                if 'Район' in obj[j]:
+                    distr = obj[j]
+                if 'Метро' in obj[j]:
+                    metro = obj[j]
+            room = obj[1]
+            # print(room, distr, metro, sep='||')
+
+            pay = delliter(str(td[3]))
+            pay = re.sub(r'\xa0|\t|\r', '', pay).split('\n')
+            if len(pay) < 3:
+                payment = "no"
+            else:
+                payment = pay[0] + pay[1] + pay[2]
+            payment = re.sub(r'Помесячно| |Предоплата', '', payment)
+            if 'тыс.руб.' in payment:
+                payment = re.sub(r'тыс\.руб\.', '', payment)
+                if '.' in payment:
+                    payment = payment.replace('.', '')
+                    payment += '00'
+                else:
+                    payment += '000'
+            elif 'руб.' in payment:
+                payment = re.sub(r'руб\.', '', payment)
+            # print(payment)
+
+            descript = td[7].find('span', {'style': "color:#CC0000; "}).text
+            # print(descript)
+
+            phone = delliter(str(td[7]))
+            phone = re.sub(r'\xa0|\t|\r', '', phone).split('\n')
+            for z in phone:
+                if "Контакты" in z:
+                    ph = z[z.find('+'):]
+                    ph = ph[:17]
+            # print(ph)
+
+            x = {'room_num': room, 'metro': metro,
+                 "cost": payment,  "contacts": dict(phone=ph, person_name=None), "loc": None,
+                 "url": url,  "adr": str(distr), "descr": descript}
+            p.append_snimu(x)
+            counter += 1
+            p.write_status(counter)
+            print('[+]')
+            #time.sleep(1)
+    p.add_date()
+    del p
+
+    
 #===================================================================================================#
                                     # WORKING WITH SOCIAL NETWORKS #
 #================================================VK=================================================#
@@ -1282,7 +1500,7 @@ def vk(n):
 #=================================SEARCH VK FEED====================================
 
 SEARCH_PARS = ["квартир", "комнат", "покомнатно", "койк"]
-WISHES = ["сдам "]
+WISHES = ["сдам ", "сниму "]
 
 def vkfeed(n):
     p = Parse('vkfeed')
@@ -1300,8 +1518,11 @@ def vkfeed(n):
                     try:
                         counter += 1
                         p.write_status(counter)
-                        p.append({'date': str(strftime("%Y-%m-%d %H:%M:%S", gmtime(offer['date']))), 'cost': 0, 'room_num': 0, 'area': 0, 'contacts': {'phone': '---', 'vk': getVkId(offer)}, 'pics': picsarr(offer), 'descr': set_priority(offer['text']), 'metro': ['---'], 'url': "https://vk.com/wall%s_%s" % (str(offer['owner_id']), str(offer['id'])), 'loc': ["---"], 'adr': 'no_adress'})
-
+                        if wish == 'сдам ':
+                            p.append({'date': str(strftime("%Y-%m-%d %H:%M:%S", gmtime(offer['date']))), 'cost': 0, 'room_num': 0, 'area': 0, 'contacts': {'phone': '---', 'vk': getVkId(offer)}, 'pics': picsarr(offer), 'descr': set_priority(offer['text']), 'metro': ['---'], 'url': "https://vk.com/wall%s_%s" % (str(offer['owner_id']), str(offer['id'])), 'loc': ["---"], 'adr': 'no_adress'})
+                        else:
+                            p.append_snimu({'date': str(strftime("%Y-%m-%d %H:%M:%S", gmtime(offer['date']))), 'cost': 0, 'room_num': 0, 'area': 0, 'contacts': {'phone': '---', 'vk': getVkId(offer)}, 'pics': picsarr(offer), 'descr': set_priority(offer['text']), 'metro': ['---'], 'url': "https://vk.com/wall%s_%s" % (str(offer['owner_id']), str(offer['id'])), 'loc': ["---"], 'adr': 'no_adress'})
+                           
                     except Exception as e:
                         alertExc()
                         pass
@@ -1326,6 +1547,9 @@ def parse_it(name, maxprice):
         parse_rentookiru(maxprice)
     elif name == 'bezPosrednikov':
         bez_posrednikov(maxprice)
+    elif name == 'posrednikovNet':
+        posrednikovnetSdam()
+        posrednikovnetSnimu()
     elif name == 'vk':
         vkfeed(maxprice)
         vk(maxprice)
@@ -1333,5 +1557,5 @@ def parse_it(name, maxprice):
     upload_db()
 
 if __name__ == "__main__":
-    cian(35000)
+    posrednikovnetSdam()
 

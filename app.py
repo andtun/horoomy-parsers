@@ -18,8 +18,11 @@ from driveAPI import upload_db
 # KEEP IT IN THE DB!!! (?) - for alerts -- yes, to be always synced!
 PARSER_LIST = json.loads(open('parser_list.json', 'r').read())
 #print(DataBase('parseRes.db').fetch("SELECT * FROM alerts;")[0][0][1:-1])
-FORMAT_DIC = json.loads(DataBase('parseRes.db').fetch("SELECT * FROM alerts;")[0][0][1:-1])
 
+try:
+    FORMAT_DIC = json.loads(DataBase('parseRes.db').fetch("SELECT * FROM alerts;")[0][0][1:-1])
+except:
+    FORMAT_DIC = {'version': 'unknown', 'added': '---', 'othertext': ''}
 
 # creating all status rows
 for p in PARSER_LIST:

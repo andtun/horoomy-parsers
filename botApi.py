@@ -36,5 +36,13 @@ def tgExcCatch(func):
 
     return wrapper
 
+def tgExcnoargs(func):
+    def wrapper():
+        try:
+            func()
+        except:
+            alertExc()
+
+    return wrapper
 
 #there has to be @tgExcCatch with no args - this works only for two args

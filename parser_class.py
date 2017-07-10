@@ -89,7 +89,10 @@ class Parse:
     # appending to db (like to #a list)
     def append(self, data):       # working with db
 
+        if data['adr'] == None:
+            return 0
 
+        
         # get coordinates if we know adress
         def get_loc(adr):
             api_adr = adr.replace(' ', '+')
@@ -112,6 +115,10 @@ class Parse:
             return adr['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['metaDataProperty']['GeocoderMetaData']['Address']['formatted']
 
 
+        def get_id(data):
+            unique_id = str(data['cost']) + str(data['room_num']) + str(data['area']) + data['loc']
+            return unique_id
+        
 
     #  SET CHECK IF THE FLAT ALREADY EXISTS   !!!!!!!!!!!!!!!!!!!!!
 
@@ -135,7 +142,7 @@ class Parse:
         # forming db command
         cmnd = """
 INSERT INTO Results VALUES (
-NULL,
+'%s',
 %s,
 %s,
 %s,
@@ -151,7 +158,7 @@ NULL,
 '%s',
 '%s'
 );
-""" % (data['cost'], data['room_num'], data['area'], evolve(data['contacts']['phone']), data['date'], 'NULL', json.dumps(data['pics'], ensure_ascii=False), json.dumps(data['contacts'], ensure_ascii=False), data['descr'], data['adr'], json.dumps(data['metro'], ensure_ascii=False), data['url'], json.dumps(data['loc']), self.name)
+""" % (get_id(data), data['cost'], data['room_num'], data['area'], evolve(data['contacts']['phone']), data['date'], 'NULL', json.dumps(data['pics'], ensure_ascii=False), json.dumps(data['contacts'], ensure_ascii=False), data['descr'], data['adr'], json.dumps(data['metro'], ensure_ascii=False), data['url'], json.dumps(data['loc']), self.name)
         #print(cmnd)
         self.db.query(cmnd)
         print("\n\n-----ONE MORE WITH "+self.name+"-----\n\n")
@@ -161,7 +168,7 @@ NULL,
         print(str(data))
         cmnd = """
     INSERT INTO Snimu VALUES (
-    NULL,
+    '%s',
     %s,
     %s,
     '%s',
@@ -171,7 +178,7 @@ NULL,
     '%s',
     '%s'
     );
-    """ % (data['cost'], data['room_num'], json.dumps(data['metro'], ensure_ascii=False), evolve(data['contacts']['phone']), json.dumps(data['contacts'], ensure_ascii=False), data['url'], json.dumps(data['pics'], ensure_ascii=False), data['descr'])
+    """ % (get_id(data), data['cost'], data['room_num'], json.dumps(data['metro'], ensure_ascii=False), evolve(data['contacts']['phone']), json.dumps(data['contacts'], ensure_ascii=False), data['url'], json.dumps(data['pics'], ensure_ascii=False), data['descr'])
         self.db.query(cmnd)
         print("\n\n-----ONE RENTER WITH "+self.name+"-----\n\n")
 
