@@ -57,8 +57,9 @@ def change():
         if request.query[param] != "":
             FORMAT_DIC[param] = request.query[param]
     db = DataBase('parseRes.db')
-    db.query("DELETE FROM alerts;") # clear alerts
+    db.delete_table('alerts') # clear alerts
     db.query("""INSERT INTO alerts VALUES ('''%s''');""" % str(json.dumps(FORMAT_DIC, ensure_ascii=False)).encode('utf-8'))
+    del db
     redirect("/adm/main")
     
 
@@ -141,6 +142,7 @@ def st():
 def clear():
     db = DataBase('parseRes.db')
     db.delete_table('Results')
+    db.delete_table('Snimu')
     #db.format()
     del db
     redirect('/')
