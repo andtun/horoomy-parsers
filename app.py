@@ -28,7 +28,7 @@ except:
 for p in PARSER_LIST:
     parsr = Parse(p)
     try:
-        if 'links processed' in parsr.get_status():
+        if parsr.get_status() == ' ':
             parsr.write_status('last updated on: never')
     except:
         parsr.write_status('last updated on: never')

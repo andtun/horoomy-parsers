@@ -30,9 +30,12 @@ del db
 
 # for phone numbers, not to use lambda
 def evolve(a):
-    a = a.replace("+7", "").replace(" ","").replace("-","").replace("(","").replace(")","")
-    if len(a) == 11:
-        return a[1:]
+    if a is not None:
+        a = a.replace("+7", "").replace(" ","").replace("-","").replace("(","").replace(")","")
+        if len(a) == 11:
+            return a[1:]
+    else:
+        a = '---'
     return a
     
 
@@ -86,8 +89,13 @@ class Parse:
         except:
             return ''
 
+    
     # appending to db (like to #a list)
     def append(self, data):       # working with db
+
+        def get_id(data):
+            unique_id = str(data['cost']) + str(data['room_num']) + str(data['area']) + data['loc']
+            return unique_id
 
         if data['adr'] == None:
             return 0
@@ -113,11 +121,6 @@ class Parse:
             adr = json.loads(adr)
             print("!!!GET_ADR USED!!!")
             return adr['response']['GeoObjectCollection']['featureMember'][0]['GeoObject']['metaDataProperty']['GeocoderMetaData']['Address']['formatted']
-
-
-        def get_id(data):
-            unique_id = str(data['cost']) + str(data['room_num']) + str(data['area']) + data['loc']
-            return unique_id
         
 
     #  SET CHECK IF THE FLAT ALREADY EXISTS   !!!!!!!!!!!!!!!!!!!!!
@@ -138,7 +141,13 @@ class Parse:
             except:
                 data['adr'] = 'YANDEXADRERR'
                 print("YANDEXADRERR")
-                
+
+
+        hsh = get_id(data)  # unique id for the descr
+
+        cmnd = "DELETE FROM Results WHERE hash='%s';" % hsh     # delete duplicates
+        db.query(cmnd)
+        
         # forming db command
         cmnd = """
 INSERT INTO Results VALUES (
@@ -158,14 +167,20 @@ INSERT INTO Results VALUES (
 '%s',
 '%s'
 );
-""" % (get_id(data), data['cost'], data['room_num'], data['area'], evolve(data['contacts']['phone']), data['date'], 'NULL', json.dumps(data['pics'], ensure_ascii=False), json.dumps(data['contacts'], ensure_ascii=False), data['descr'], data['adr'], json.dumps(data['metro'], ensure_ascii=False), data['url'], json.dumps(data['loc']), self.name)
+""" % (hsh, data['cost'], data['room_num'], data['area'], evolve(data['contacts']['phone']), data['date'], 'NULL', json.dumps(data['pics'], ensure_ascii=False), json.dumps(data['contacts'], ensure_ascii=False), data['descr'], data['adr'], json.dumps(data['metro'], ensure_ascii=False), data['url'], json.dumps(data['loc']), self.name)
         #print(cmnd)
         self.db.query(cmnd)
         print("\n\n-----ONE MORE WITH "+self.name+"-----\n\n")
 
 
     def append_snimu(self, data):
-        print(str(data))
+
+        hsh = hash(data['descr'].encode('utf-8')) # unique id
+
+        cmnd = "DELETE FROM Snimu WHERE hash='%s';" % hsh   # remove duplicates
+        db.query(cmnd)
+        
+        #print(str(data))
         cmnd = """
     INSERT INTO Snimu VALUES (
     '%s',
@@ -178,7 +193,7 @@ INSERT INTO Results VALUES (
     '%s',
     '%s'
     );
-    """ % (get_id(data), data['cost'], data['room_num'], json.dumps(data['metro'], ensure_ascii=False), evolve(data['contacts']['phone']), json.dumps(data['contacts'], ensure_ascii=False), data['url'], json.dumps(data['pics'], ensure_ascii=False), data['descr'])
+    """ % (hsh, data['cost'], data['room_num'], json.dumps(data['metro'], ensure_ascii=False), evolve(data['contacts']['phone']), json.dumps(data['contacts'], ensure_ascii=False), data['url'], json.dumps(data['pics'], ensure_ascii=False), data['descr'])
         self.db.query(cmnd)
         print("\n\n-----ONE RENTER WITH "+self.name+"-----\n\n")
 
