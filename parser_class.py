@@ -146,7 +146,7 @@ class Parse:
         hsh = get_id(data)  # unique id for the descr
 
         cmnd = "DELETE FROM Results WHERE hash='%s';" % hsh     # delete duplicates
-        db.query(cmnd)
+        self.db.query(cmnd)
         
         # forming db command
         cmnd = """
@@ -178,7 +178,7 @@ INSERT INTO Results VALUES (
         hsh = hash(data['descr'].encode('utf-8')) # unique id
 
         cmnd = "DELETE FROM Snimu WHERE hash='%s';" % hsh   # remove duplicates
-        db.query(cmnd)
+        self.db.query(cmnd)
         
         #print(str(data))
         cmnd = """
