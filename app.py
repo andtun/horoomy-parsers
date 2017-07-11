@@ -12,6 +12,10 @@ from botApi import tgExcCatch, alertExc
 from driveAPI import upload_db
 
 
+def html(filename):
+    return static_file(filename+'.html', root='./html')
+
+
 #-------------------------before run------------------------
 
 # info kept in txt files
@@ -43,6 +47,17 @@ for p in PARSER_LIST:
 def main():
     return template("./html/main.html", version=FORMAT_DIC['version'], added=FORMAT_DIC['added'], othertext=FORMAT_DIC['othertext'])
 
+@get("/search")
+def search():
+    return html('search')
+
+@get("/giveMeFlats")
+def give():
+    resp =  html('return_cookies')
+    for param in request.query:
+        resp.set_cookie(param, request.query[param])
+        #print(request.query[param])
+    return resp
 
 # main with cms
 @get("/adm/main")
@@ -61,7 +76,11 @@ def change():
     db.query("""INSERT INTO alerts VALUES ('''%s''');""" % str(json.dumps(FORMAT_DIC, ensure_ascii=False)).encode('utf-8'))
     del db
     redirect("/adm/main")
-    
+
+@get("/test")
+def scok():
+    response.set_cookie('lol', 'ya')
+    return '0'
 
 # start parse (ALL parsers)
 @get("/start_parse")
