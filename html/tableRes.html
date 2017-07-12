@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html >
+<head>
+  <meta charset="UTF-8">
+  <title>Результаты поиска</title>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+
+  
+      <link rel="stylesheet" href="/css/style.css">
+
+  
+<script type="text/javascript">
+  
+
+var count = {{{cnt}}};
+var offers = {{{offr}}};
+
+window.onload = function() {
+
+  console.log(offers)
+
+  var tbl = document.getElementById('tableRes');
+
+  for (var i = 0; i < offers.length; i++) {
+    var offer = offers[i];
+
+    var mainpic;
+
+    //console.log(offer[1].length)
+
+    if (offer[1].length > 2) {
+      mainpic = JSON.parse(offer[1])[0]
+    }
+    else {
+      mainpic = "/pics/foto.png"
+    }
+
+    offer[5] = JSON.parse(offer[5])
+    offer[6] = offer[6].slice(1, -1)
+
+      tbl.innerHTML += `<tr>
+         <td><a href="` + offer[0] +`" target="_blank"><img src="`+ mainpic +`" alt="None" /></a></td>
+         <td>`+ offer[2] +`</td>
+         <td>`+ offer[3] +`</td>
+         <td>`+ offer[4] +` м2</td>
+         <td>`+ offer[5]['phone'] +`</td>
+         <td><a target="_blank" href="/geolocate?loc=`+ offer[6] +`">`+ offer[7] +`</a> </td>
+         <td>`+ offer[8] +`</td>
+         <td style="width: 400px;">`+ offer[9] +`</td></tr>`
+    }
+  }
+
+
+
+</script>
+
+
+</head>
+
+<body>
+  <div class="table-users">
+   <div class="header">Users</div>
+   
+   <table cellspacing="0" id="tableRes">
+      <tr>
+         <th>Ссылка на объявление</th>
+         <th width="40px">Цена, руб/мес</th>
+         <th>Комнат</th>
+         <th>Площадь</th>
+         <th width="15%">Телефон</th>
+         <th width="20%">Адрес</th>
+         <th>Дата размещения</th>
+         <th width="200px">Описание</th>
+      </tr>
+
+   </table>
+</div>
+  
+  <div align="center">
+  <button><<</button><a onclick="alert('clk');">11/15</a><button>>></button>
+  </div>
+  
+</body>
+</html>
