@@ -1,7 +1,8 @@
 # This Python file uses the following encoding: utf-8
 
-import threading
+import math
 import json
+import threading
 #import driveAPI as dvp
 from multiprocessing import Process
 from parseAPI import parse_it
@@ -51,13 +52,101 @@ def main():
 def search():
     return html('search')
 
+
+
 @get("/giveMeFlats")
 def give():
-    resp =  html('return_cookies')
-    for param in request.query:
-        resp.set_cookie(param, request.query[param])
+
+    def cost_range(a):  # cost range formula
+        if a != '':
+            a = int(a)
+            b = int()
+            b = math.trunc(40*math.sqrt(a))
+            return a-b, a+b     # min_cost, max_cost
+        else:
+            return 0, 100000
+    
+    q = request.query
+
+    # room_num
+    if q['dealType'] == "Flat":
+        room_num = '=' + q['room_num']
+        if room_num == '=':
+            room_num = ' IN (1, 2, 3)'
+    else:
+        room_num = '=0'
+
+    # page
+    if 'page' not in q:
+        offset = 0
+    else:
+        offset = (int(q['page'])-1) * 20
+
+    # cost
+    min_cost, max_cost = cost_range(q['cost'])
+
+    cmnd = "FROM Results WHERE cost BETWEEN %s AND %s " % (min_cost, max_cost)
+    
+    # metro
+    if q['metro'] != '':
+        metro = q['metro'].encode('ISO-8859-1').decode('utf-8')
+        cmnd += "AND metro LIKE '%%%s%%' " % metro
+        
+    cmnd += """    
+AND room_num%s
+LIMIT 20 OFFSET %s""" % (room_num, offset)
+        
+    db = DataBase('parseRes.db')
+    db.query('PRAGMA case_sensitive_like = FALSE;')
+    #print(cmnd)
+
+    cmnd_count = "SELECT count(*) " + cmnd
+    cmnd = "SELECT prooflink, pics, cost, room_num, area, contacts, loc, adr, date, descr " + cmnd
+    print(cmnd)
+    res = db.fetch(cmnd)
+    count = db.fetch(cmnd_count)[0][0]
+    print(count)
+    # response.set_cookie('offers_count', count)
+    del db
+    res = json.dumps(res).replace('(', '[').replace(')', ']')
+
+    return open('./html/tableRes.html', 'r').read().replace('{{{cnt}}}', str(count)).replace('{{{offr}}}', res).encode('windows-1251')
+
+
+
+
+    
+    #d = {'a': 'b', "c": ['ad', 'df']}
+    #resp =
+    #return str(open('./html/return_cookies.html', 'r').read()) % str(d)
+    #for param in request.query:
+     #   resp.set_cookie(param, request.query[param])
         #print(request.query[param])
-    return resp
+    #return resp
+
+#----------------------------------------DISPLAY ON MAP----------------------------------------------
+
+#костыль с записью в текстовый файл. NEEDES TO BE IMPROVED
+
+@get("/geolocate")
+def geo():
+    if request.query['loc'] == "YANDEXLOCERR":
+        return '<h2>К сожалению, мы не можем найти что-либо по указанному адресу :( </h2>'
+    lat, lng =  request.query['loc'].split(',')
+    locvar = open("locvar_storage.js", 'w')
+    towrite = """var get_lat = %s
+var get_lng = %s
+var get_rad = 80""" % (lat, lng)
+    locvar.write(towrite)
+    locvar.close()
+    return html("circler")
+
+@get("/locvar_storage.js")
+def locvar():
+    return static_file('/locvar_storage.js', root='.')
+
+#----------------------------------------------------------------------------------------------------
+
 
 # main with cms
 @get("/adm/main")
@@ -166,6 +255,11 @@ def clear():
     del db
     redirect('/')
 
+
+@get("/pics/<filename>")
+def pics(filename):
+    return static_file(filename, root='./pics')
+
 '''@post("/errorBot")
 def err():
     print(request.json)
@@ -186,6 +280,10 @@ def snc():
     redirect('/')
     #except:
      #   alertExc()
+
+@get("/css/style.css")
+def css():
+    return static_file('style.css', root='./css')
         
 # run the server
 
