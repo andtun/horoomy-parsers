@@ -122,7 +122,7 @@ AND room_num%s""" % room_num
     del db
     res = json.dumps(res).replace('(', '[').replace(')', ']')
 
-    return open('./html/tableRes.html', 'r').read().replace('{{{cnt}}}', str(count)).replace('{{{offr}}}', res).encode('windows-1251')
+    return open('./html/tableRes.html', 'r', encoding='windows-1251').read().replace('{{{cnt}}}', str(count)).replace('{{{offr}}}', res).encode('windows-1251')
 
 
 
