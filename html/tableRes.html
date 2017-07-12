@@ -14,9 +14,53 @@
   
 
 var count = {{{cnt}}};
+count = Math.trunc(count/20) + 1
 var offers = {{{offr}}};
 
+
+function getQueryParameter(name) {
+    url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return '1';
+    if (!results[2]) return '1';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+var curPage = getQueryParameter('page');
+//if (curPage == 0) curPage = 1
+
+
+function gotoPage(method='Prompt') {
+
+  if (method == 'Prompt') {
+    var pg = 'a';
+    while (pg == "a"){
+      try {
+      var pg = Number(prompt('Введите номер страницы')) }
+      catch (e) {var pg = 'a'}
+    }
+
+    pg = Math.abs(pg);
+    if (pg > count){
+      pg = count;
+    }
+    if (pg <= 0) pg = 1; }
+
+  else if (method == 'Next') var pg = Number(curPage) + 1
+  else if (method == 'Prev') var pg = Number(curPage) - 1
+
+  var pageloc = window.location.href;
+  window.location.replace(pageloc.slice(0, pageloc.lastIndexOf('&page=')) + "&page="+pg);
+
+}
+
 window.onload = function() {
+
+  document.getElementById('promptAction').innerHTML = curPage + "/" + count.toString()
+  if (curPage == 1) document.getElementById('prevPage').disabled = true;
+  if (curPage == count) document.getElementById('nextPage').disabled = true;
 
   console.log(offers)
 
@@ -59,8 +103,9 @@ window.onload = function() {
 </head>
 
 <body>
+
   <div class="table-users">
-   <div class="header">Users</div>
+   <div class="header">hoROOMy system <a style="color: #C0C5D8;" href="/search">[к поиску]</a></div>
    
    <table cellspacing="0" id="tableRes">
       <tr>
@@ -78,7 +123,7 @@ window.onload = function() {
 </div>
   
   <div align="center">
-  <button><<</button><a onclick="alert('clk');">11/15</a><button>>></button>
+  <button id="prevPage" onclick="gotoPage(method='Prev');"><<</button><a style="margin-right: 20px; margin-left: 20px;" id="promptAction" href="" onclick="gotoPage(method='Prompt');">11/15</a><button id="nextPage" onclick="gotoPage(method='Next');">>></button>
   </div>
   
 </body>

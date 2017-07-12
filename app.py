@@ -16,6 +16,11 @@ from driveAPI import upload_db
 def html(filename):
     return static_file(filename+'.html', root='./html')
 
+def auth_func(uname, pw):
+    if uname == 'admin' and pw == 'adminpsw':
+        return True
+    return False
+
 
 #-------------------------before run------------------------
 
@@ -46,7 +51,15 @@ for p in PARSER_LIST:
 # parsers & their status
 @get("/")
 def main():
+    redirect('/search')
+
+
+@get("/system")
+@auth_basic(auth_func)
+def ss():
     return template("./html/main.html", version=FORMAT_DIC['version'], added=FORMAT_DIC['added'], othertext=FORMAT_DIC['othertext'])
+
+
 
 @get("/search")
 def search():
@@ -93,15 +106,14 @@ def give():
         cmnd += "AND metro LIKE '%%%s%%' " % metro
         
     cmnd += """    
-AND room_num%s
-LIMIT 20 OFFSET %s""" % (room_num, offset)
+AND room_num%s""" % room_num
         
     db = DataBase('parseRes.db')
     db.query('PRAGMA case_sensitive_like = FALSE;')
     #print(cmnd)
 
     cmnd_count = "SELECT count(*) " + cmnd
-    cmnd = "SELECT prooflink, pics, cost, room_num, area, contacts, loc, adr, date, descr " + cmnd
+    cmnd = "SELECT prooflink, pics, cost, room_num, area, contacts, loc, adr, date, descr " + cmnd + " LIMIT 20 OFFSET %s;" % offset
     print(cmnd)
     res = db.fetch(cmnd)
     count = db.fetch(cmnd_count)[0][0]
