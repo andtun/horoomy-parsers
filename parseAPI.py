@@ -1863,8 +1863,8 @@ def parse_it(name, maxprice):
         posrednikovnetSdam()
         posrednikovnetSnimu()
     elif name == 'irr':
-        irr_room()
         irr(maxprice)
+        irr_room()
     elif name == 'vk':
         vkfeed(maxprice)
         vk(maxprice)
