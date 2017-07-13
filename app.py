@@ -171,7 +171,9 @@ def change():
         if request.query[param] != "":
             FORMAT_DIC[param] = request.query[param]
     DBcon.delete_table('alerts') # clear alerts
-    DBcon.query("""INSERT INTO alerts VALUES ('''%s''');""" % str(json.dumps(FORMAT_DIC, ensure_ascii=False)).encode('utf-8'))
+    cmnd = """INSERT INTO alerts VALUES ('''%s''');""" % str(json.dumps(FORMAT_DIC, ensure_ascii=False))
+    print(cmnd)
+    DBcon.query(cmnd)
     redirect("/adm/main")
 
 @get("/test")
