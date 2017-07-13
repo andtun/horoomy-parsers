@@ -2,29 +2,24 @@
 
 import json
 import requests
-from database import DataBase
+from database import DataBase, DBcon
 from time import gmtime, strftime
 from driveAPI import BackuppedFile
 from botApi import alertExc, alertBot
 
 
 # when we start app.py
-
-db = DataBase('parseRes.db')
 #sync db
-
-backup_db = BackuppedFile('parseRes.db')    # BACKUP_DB IS EXPORTED AS A CONST
-#backup_db.sync()
+DBcon.sync()
 
 
 #------------------------------------------------------
 
 try:
-    db.format()
+    DBcon.format()
 except:
     print("db already formatted")
 print("!!!db created!!!")
-del db
 #------------------------------------------------------
 
 

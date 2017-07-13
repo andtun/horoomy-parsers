@@ -8,7 +8,7 @@ from multiprocessing import Process
 from parseAPI import parse_it
 from bottle import *
 from parser_class import Parse
-from database import DataBase
+from database import DataBase, DBcon
 from botApi import tgExcCatch, alertExc
 from driveAPI import upload_db
 
@@ -30,7 +30,7 @@ PARSER_LIST = json.loads(open('parser_list.json', 'r').read())
 #print(DataBase('parseRes.db').fetch("SELECT * FROM alerts;")[0][0][1:-1])
 
 try:
-    FORMAT_DIC = json.loads(DataBase('parseRes.db').fetch("SELECT * FROM alerts;")[0][0][1:-1])
+    FORMAT_DIC = json.loads(DBcon.fetch("SELECT * FROM alerts;")[0][0][1:-1])
 except:
     FORMAT_DIC = {'version': 'unknown', 'added': '---', 'othertext': ''}
 
@@ -108,18 +108,16 @@ def give():
     cmnd += """    
 AND room_num%s""" % room_num
         
-    db = DataBase('parseRes.db')
-    db.query('PRAGMA case_sensitive_like = FALSE;')
+    DBcon.query('PRAGMA case_sensitive_like = FALSE;')
     #print(cmnd)
 
     cmnd_count = "SELECT count(*) " + cmnd
     cmnd = "SELECT prooflink, pics, cost, room_num, area, contacts, loc, adr, date, descr " + cmnd + " LIMIT 20 OFFSET %s;" % offset
     print(cmnd)
-    res = db.fetch(cmnd)
-    count = db.fetch(cmnd_count)[0][0]
+    res = DBcon.fetch(cmnd)
+    count = DBcon.fetch(cmnd_count)[0][0]
     print(count)
     # response.set_cookie('offers_count', count)
-    del db
     res = json.dumps(res).replace('(', '[').replace(')', ']')
 
     return open('./html/tableRes.html', 'r', encoding='windows-1251').read().replace('{{{cnt}}}', str(count)).replace('{{{offr}}}', res).encode('windows-1251')
@@ -172,10 +170,8 @@ def change():
     for param in request.query:
         if request.query[param] != "":
             FORMAT_DIC[param] = request.query[param]
-    db = DataBase('parseRes.db')
-    db.delete_table('alerts') # clear alerts
-    db.query("""INSERT INTO alerts VALUES ('''%s''');""" % str(json.dumps(FORMAT_DIC, ensure_ascii=False)).encode('utf-8'))
-    del db
+    DBcon.delete_table('alerts') # clear alerts
+    DBcon.query("""INSERT INTO alerts VALUES ('''%s''');""" % str(json.dumps(FORMAT_DIC, ensure_ascii=False)).encode('utf-8'))
     redirect("/adm/main")
 
 @get("/test")
@@ -188,9 +184,7 @@ def scok():
 #@tgExcCatch
 def st():              
     maxprice = request.query.maxprice
-    db = DataBase('parseRes.db')
-    db.delete_table('Results')
-    del db
+    DBcon.delete_table('Results')
     for parser_name in PARSER_LIST:
         t = threading.Thread(target = parse_it, args=(parser_name, maxprice,))    	
         t.daemon = True
@@ -260,11 +254,9 @@ def st():
 
 @get("/clear_results")
 def clear():
-    db = DataBase('parseRes.db')
-    db.delete_table('Results')
-    db.delete_table('Snimu')
+    DBcon.delete_table('Results')
+    DBcon.delete_table('Snimu')
     #db.format()
-    del db
     redirect('/')
 
 

@@ -14,6 +14,7 @@ class Bot:
 
     def sendMessage(self, text):
         requests.post(self.full_link % 'sendMessage', data={'text': text})
+        
 
 # since we use only one bot, here are its params
 ERROR_CHAT_ID = '273633310'

@@ -82,6 +82,9 @@ descr TEXT
             self.query(cmnd)
 
 
+DBcon = DataBase('parseRes.db')     # global database connection
+
+
 if __name__ == "__main__":
  #   for name in ["realEstate", "kvartirant", "rentooki", "bezPosrednikov", "sdamsnimu", "sdatsnyat", "rentm", "novoselie", "vkfeed"]:
   #      DataBase('parseRes.db').query("insert into Statuses values ('%s', '4 links processed')" % name)
