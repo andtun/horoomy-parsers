@@ -1,18 +1,19 @@
 # This Python file uses the following encoding: utf-8
 
 import re
-import requests
 import json
 import time
+import base64
 import datetime
+import requests
 import threading
-from datetime import date as datetimedate
-from botApi import alertExc, tgExcCatch, alertBot, tgExcnoargs
 from bs4 import BeautifulSoup
 from time import gmtime, strftime
-from parser_class import Parse, backup_db
 from datetime import datetime, timedelta
+from parser_class import Parse, backup_db
+from datetime import date as datetimedate
 from driveAPI import BackuppedFile, upload_db
+from botApi import alertExc, tgExcCatch, alertBot, tgExcnoargs
 
 
 
@@ -78,7 +79,7 @@ def realestate(maxprice):
         #Rooms
         room_num = info.find('div', class_='object-params').find('div',class_='params-block').find_all('div', class_='params-item')[room_num_i].find('div',class_='float-right').text
         if room_num == 'комната':
-            room_num = 1
+            room_num = 0
         else:
             room_num = int(room_num)    
 
@@ -763,6 +764,11 @@ def bez_posrednikov(maxprice):
                      'komnat[2]=3&' \
                      'page=0' % maxprice
 
+    url['room table'] = 'http://snimi-bez-posrednikov.ru/' \
+                    'snyat-komnatu?' \
+                    'price=%s&' \
+                    'page=' % maxprice
+
     url['home'] = 'http://snimi-bez-posrednikov.ru'
     url['buy'] = '/snyat-kvartiru?'
     url['sell'] = '/snimu-kvartiru?'
@@ -796,7 +802,9 @@ def bez_posrednikov(maxprice):
                 rooms_amount = rooms_amount.find('div', {'class': 'field-item even'})
                 rooms_amount = int(rooms_amount.text)
             else:
-                rooms_amount = 0
+                rooms_amount = 'NULL'
+
+            print(rooms_amount)
 
             photos_ = content.find('div', {'class': 'field field-name-field-foto field-type-image field-label-hidden view-mode-full'})
             photos = list()
@@ -993,8 +1001,9 @@ def bez_posrednikov(maxprice):
                     #print(str(flat))
 
 
-    for b_url in [url['renters table'], url['owners table']]:
+    for b_url in [url['renters table'], url['owners table']]: # url['room table']]:
         parseOwnerList(b_url)
+        #print("!!!!!finished one!!!!!")
         
     p.add_date()
     del p
@@ -1478,7 +1487,120 @@ def posrednikovnetSnimu():
     p.add_date()
     del p
 
-     
+
+#===============================================IRR.RU============================================
+
+def irr():
+    def get_html(url):
+        r = requests.get(url)
+        return r.text
+
+
+    def get_page_data(html, url):
+        soup = BeautifulSoup(html, 'lxml')
+
+        print(url)
+        #metro
+        try:
+            metro = []
+            temp = soup.find('div', class_='irrSite__layout').find('div',
+                class_='irrSite__wrapper').find_all('div',
+                class_='siteBody__inner')[1].find('main', class_='siteBody__mainPart').find('div',
+                class_='productPage__metro').text.split("м.")[1][1:].replace('\n','')
+            metro.append(temp)
+        except:
+            metro = []  
+
+        #pics
+        pics = []          
+        temp = soup.find('div', class_='irrSite__wrapper').find('div', class_='lineGallery').find_all('meta',itemprop="image")
+        for i in temp:
+            pics.append(i.get('content'))
+
+        start = html.find('retailrocket.products.post')+28
+        ch = '{'
+        i = 0
+        while ch != '}':
+            ch = html[start+i]
+            i+=1
+        end = start + i
+        data = json.loads(html[start:end] + '}')
+
+        #descr
+        descr = data["description"].replace(r'\n','')
+
+        #area
+        area = data["params"]["meters-total"]
+
+        #cost
+        cost = data["params"]["price"]
+
+        #date
+        date = data["params"]["date_create"].split()[0].split('-')
+        date = '.'.join(list(reversed(date)))
+
+        #id
+        id = data["id"]
+
+        #adr
+        adr = soup.find("div", class_="siteBody").find_all("div", class_="siteBody__mainContainer")[1].find("div", class_="productPage__mainInfoWrapper").find("div", class_="productPage__infoTextBold js-scrollToMap").text.strip()
+
+        #phone
+        data_phone = soup.find("div", class_="siteBody").find_all("div", class_="siteBody__mainContainer")[1].find("div", class_="productPage__mainInfoWrapper").find("div", class_="productPage__phoneText").get("data-phone")
+        phone = base64.b64decode(data_phone).decode("utf-8")
+        contacts = {"phone": phone}
+
+        #room_num
+        temp = soup.find('div', class_='irrSite__layout').find('div',
+            class_='irrSite__wrapper').find_all('div',
+                class_='siteBody__inner')[1].find('main', class_='siteBody__mainPart').find('div',
+                class_='productPage__infoColumn').find('ul').find_all('li', class_='productPage__infoColumnBlockText')#[2].text.split(':')[1])
+
+        for i in range(len(temp)):
+            if 'Комнат в квартире' in temp[i].text:
+                room_num = int(temp[i].text.split(':')[1])
+                break
+
+
+        out = {"metro": metro, "descr": descr, "area": area, "cost": cost, "date": date, "adr": adr, "contacts": contacts, "room_num": room_num, "pics": pics, "url": url}
+        return out
+
+
+    def get_total_pages(html):
+        soup = BeautifulSoup(html, 'lxml')
+        total_pages = soup.find("div", class_="irrSite__layout js-irrSiteLayout js-favoriteAdd").find("div", class_="pagination js-paginationBlockHolder").find_all("li", class_="pagination__pagesItem")[-1].find("a").text
+        return int(total_pages)
+
+
+    def realestate():
+        p = Parse('irr')
+        template = r"http://irr.ru/real-estate/rent/search/boundary_in_rooms=1%2C2%2C3/price=+%D0%B4%D0%BE+30+000/page"
+        base_url = r"http://irr.ru/real-estate/rent/search/boundary_in_rooms=1,2,3/price=%20%D0%B4%D0%BE%2030%20000/"
+        #url = 'http://irr.ru/real-estate/apartments-sale/secondary/3-komn-kvartira-kovrovyy-mkr-advert642695870.html'
+        html = get_html(base_url)
+        out_data = []
+        total_pages = get_total_pages(html)
+        for page in range(total_pages)[1:]:
+            url = template + str(page) + "/"
+            html = get_html(url)
+            soup = BeautifulSoup(html, 'lxml')
+            ads = soup.find("div", class_="irrSite__wrapper").find("div", class_="siteBody__mainContainer").find("div", class_="listing").find_all("div", class_="listing__item")
+            for ad in ads:
+                try:
+                    page_url = ad.find("div", class_="listing__itemTitleWrapper").find("a", class_="listing__itemTitle").get("href")
+                    data = get_page_data(get_html(page_url), page_url)
+                    p.append(data)
+                    p.write_status(page)
+                    print("Current_page: " + str(page))
+                except:
+                    alertExc()
+
+        p.add_date()
+        del p
+
+    realestate()
+
+         
 #===================================================================================================#
                                     # WORKING WITH SOCIAL NETWORKS #
 #================================================VK=================================================#
@@ -1607,6 +1729,8 @@ def parse_it(name, maxprice):
     elif name == 'posrednikovNet':
         posrednikovnetSdam()
         posrednikovnetSnimu()
+    elif name == 'irr':
+        irr()
     elif name == 'vk':
         vkfeed(maxprice)
         vk(maxprice)
@@ -1614,5 +1738,5 @@ def parse_it(name, maxprice):
     upload_db()
 
 if __name__ == "__main__":
-    posrednikovnetSnimu()
+    irr()
 

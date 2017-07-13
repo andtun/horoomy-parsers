@@ -14,7 +14,7 @@ db = DataBase('parseRes.db')
 #sync db
 
 backup_db = BackuppedFile('parseRes.db')    # BACKUP_DB IS EXPORTED AS A CONST
-backup_db.sync()
+#backup_db.sync()
 
 
 #------------------------------------------------------
