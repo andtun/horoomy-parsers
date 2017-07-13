@@ -10,7 +10,7 @@ import threading
 from bs4 import BeautifulSoup
 from time import gmtime, strftime
 from datetime import datetime, timedelta
-from parser_class import Parse, backup_db
+from parser_class import Parse
 from datetime import date as datetimedate
 from driveAPI import BackuppedFile, upload_db
 from botApi import alertExc, tgExcCatch, alertBot, tgExcnoargs
