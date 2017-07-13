@@ -753,6 +753,7 @@ def bez_posrednikov(maxprice):
                     'komnat[1]=2&' \
                     'komnat[2]=3&' \
                     'page=' % maxprice
+    
     url['renters table'] = 'http://snimi-bez-posrednikov.ru/' \
                      'snimu-kvartiru?' \
                      'field_price_value=%s&' \
