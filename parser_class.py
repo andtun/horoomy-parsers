@@ -10,7 +10,7 @@ from botApi import alertExc, alertBot
 
 # when we start app.py
 #sync db
-DBcon.sync()
+BackuppedFile('parseRes.db').sync()
 
 
 #------------------------------------------------------
