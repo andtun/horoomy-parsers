@@ -278,6 +278,7 @@ def stats():
 
     try:
         room = DBcon.fetch("SELECT avg(room_num) FROM Results WHERE metro like '%%%s%%';" % metro)[0][0]
+        room = str(room)[:str(room).find('.')]
     except:
         room = 'undefined'
 
