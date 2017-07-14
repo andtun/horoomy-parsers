@@ -90,11 +90,7 @@ if __name__ == "__main__":
   #      DataBase('parseRes.db').query("insert into Statuses values ('%s', '4 links processed')" % name)
     #DataBase('parseRes.db').format()
     #DataBase('parseRes.db').query("""insert into alerts values ('''%s''')""" % '''{"version": "0.0.9.130", "added": "---", "othertext": ""}''')
-    cmnd = """SELECT * FROM Results
-WHERE metro LIKE '%%Славянский бульвар%%'
-AND cost BETWEEN 23072 AND 36928
-AND room_num=2
-LIMIT 20 OFFSET 0;
+    cmnd = """SELECT avg(cost) from results where room_num=1;
 """
     print(DataBase('parseRes.db').fetch(cmnd))
     
