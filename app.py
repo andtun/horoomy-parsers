@@ -277,17 +277,17 @@ def stats():
     metro = request.query.metro
 
     try:
-        room = DBcon.fetch("SELECT avg(room_num) FROM Results WHERE metro='%s';" % metro)[0][0]
+        room = DBcon.fetch("SELECT avg(room_num) FROM Results WHERE metro like '%%%s%%';" % metro)[0][0]
     except:
         room = 'undefined'
 
     try:
-        cost = DBcon.fetch("SELECT AVG(cost) FROM Results WHERE metro='%s';" % metro)[0][0]
+        cost = DBcon.fetch("SELECT AVG(cost) FROM Results WHERE metro like '%%%s%%';" % metro)[0][0]
     except:
         cost = 'undefined'
 
     try:
-        area = DBcon.fetch("SELECT AVG(area) FROM Results WHERE metro='%s';" % metro)[0][0]
+        area = DBcon.fetch("SELECT AVG(area) FROM Results WHERE metro like '%%%s%%';" % metro)[0][0]
     except:
         area = 'undefined'
 

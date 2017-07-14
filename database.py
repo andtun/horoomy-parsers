@@ -90,7 +90,7 @@ if __name__ == "__main__":
   #      DataBase('parseRes.db').query("insert into Statuses values ('%s', '4 links processed')" % name)
     #DataBase('parseRes.db').format()
     #DataBase('parseRes.db').query("""insert into alerts values ('''%s''')""" % '''{"version": "0.0.9.130", "added": "---", "othertext": ""}''')
-    cmnd = """SELECT avg(cost) from results where room_num=1;
+    cmnd = """SELECT avg(cost) from results where metro like '%%ВДНХ%%';
 """
     print(DataBase('parseRes.db').fetch(cmnd))
     
