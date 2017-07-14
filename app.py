@@ -278,17 +278,19 @@ def stats():
 
     try:
         room = DBcon.fetch("SELECT avg(room_num) FROM Results WHERE metro like '%%%s%%';" % metro)[0][0]
-        room = str(room)[:str(room).find('.')]
+        room = str(room)[:str(room).find('.')+4]
     except:
         room = 'undefined'
 
     try:
         cost = DBcon.fetch("SELECT AVG(cost) FROM Results WHERE metro like '%%%s%%';" % metro)[0][0]
+        cost = str(cost)[:str(cost).find('.')]
     except:
         cost = 'undefined'
 
     try:
         area = DBcon.fetch("SELECT AVG(area) FROM Results WHERE metro like '%%%s%%';" % metro)[0][0]
+        area = str(area)[:str(area).find('.')]
     except:
         area = 'undefined'
 
