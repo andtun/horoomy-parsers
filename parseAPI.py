@@ -1831,9 +1831,9 @@ def vkfeed(n):
                         counter += 1
                         p.write_status(counter)
                         if wish == 'сдам ':
-                            p.append({'date': str(strftime("%Y-%m-%d %H:%M:%S", gmtime(offer['date']))), 'cost': 0, 'room_num': 0, 'area': 0, 'contacts': {'phone': '---', 'vk': getVkId(offer)}, 'pics': picsarr(offer), 'descr': set_priority(offer['text']), 'metro': ['---'], 'url': "https://vk.com/wall%s_%s" % (str(offer['owner_id']), str(offer['id'])), 'loc': "", 'adr': 'no_adress'})
+                            p.append({'date': str(strftime("%Y-%m-%d %H:%M:%S", gmtime(offer['date']))), 'cost': 0, 'room_num': 0, 'area': 0, 'contacts': {'phone': '---', 'vk': getVkId(offer)}, 'pics': picsarr(offer), 'descr': set_priority(offer['text']), 'metro': ['---'], 'url': "https://vk.com/wall%s_%s" % (str(offer['owner_id']), str(offer['id'])), 'loc': "-.-", 'adr': 'no_adress'})
                         else:
-                            p.append_snimu({'date': str(strftime("%Y-%m-%d %H:%M:%S", gmtime(offer['date']))), 'cost': 0, 'room_num': 0, 'area': 0, 'contacts': {'phone': '---', 'vk': getVkId(offer)}, 'pics': picsarr(offer), 'descr': set_priority(offer['text']), 'metro': ['---'], 'url': "https://vk.com/wall%s_%s" % (str(offer['owner_id']), str(offer['id'])), 'loc': "", 'adr': 'no_adress'})
+                            p.append_snimu({'date': str(strftime("%Y-%m-%d %H:%M:%S", gmtime(offer['date']))), 'cost': 0, 'room_num': 0, 'area': 0, 'contacts': {'phone': '---', 'vk': getVkId(offer)}, 'pics': picsarr(offer), 'descr': set_priority(offer['text']), 'metro': ['---'], 'url': "https://vk.com/wall%s_%s" % (str(offer['owner_id']), str(offer['id'])), 'loc': "-.-", 'adr': 'no_adress'})
                            
                     except Exception as e:
                         alertExc()
