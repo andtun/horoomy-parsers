@@ -89,7 +89,7 @@ class Parse:
     def append(self, data):       # working with db
 
         def get_id(data):
-            unique_id = str(data['cost']) + str(data['room_num']) + str(data['area']) + data['loc']
+            unique_id = str(data['cost']) + str(data['room_num']) + str(data['area']) + str(data['loc'])
             return unique_id
 
         if data['adr'] == None:

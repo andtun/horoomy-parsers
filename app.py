@@ -3,7 +3,6 @@
 import math
 import json
 import threading
-#import driveAPI as dvp
 from multiprocessing import Process
 from parseAPI import parse_it
 from bottle import *
@@ -13,9 +12,12 @@ from botApi import tgExcCatch, alertExc
 from driveAPI import upload_db
 
 
+# return an html page
 def html(filename):
     return static_file(filename+'.html', root='./html')
 
+
+# мегакостыль для авторизации (как пропишем авторизацию, уберём его)
 def auth_func(uname, pw):
     if uname == 'admin' and pw == 'adminpsw':
         return True
@@ -24,17 +26,16 @@ def auth_func(uname, pw):
 
 #-------------------------before run------------------------
 
-# info kept in txt files
-# KEEP IT IN THE DB!!! (?) - for alerts -- yes, to be always synced!
+# all parser names are kept in json file
 PARSER_LIST = json.loads(open('parser_list.json', 'r').read())
-#print(DataBase('parseRes.db').fetch("SELECT * FROM alerts;")[0][0][1:-1])
 
+# get stuff like version and description if exists
 try:
     FORMAT_DIC = json.loads(DBcon.fetch("SELECT * FROM alerts;")[0][0][1:-1])
 except:
     FORMAT_DIC = {'version': 'unknown', 'added': '---', 'othertext': ''}
 
-# creating all status rows
+# creating all status rows - needs to be rewritten
 for p in PARSER_LIST:
     parsr = Parse(p)
     try:
@@ -45,28 +46,131 @@ for p in PARSER_LIST:
         
     del parsr
 
-#--------------------------server is here----------------------------
+    
+
+#===========================server is here============================
 
 
-# parsers & their status
+# main page
 @get("/")
 def main():
     redirect('/search')
 
 
+#-------------------------PARSER CONTROL PANEL------------------------
+
+
+# html
 @get("/system")
 @auth_basic(auth_func)
 def ss():
     return template("./html/main.html", version=FORMAT_DIC['version'], added=FORMAT_DIC['added'], othertext=FORMAT_DIC['othertext'])
 
 
+# html with version-control cms
+@get("/adm/main")
+def main():
+    return template("./html/main-adm.html", version=FORMAT_DIC['version'], added=FORMAT_DIC['added'], othertext=FORMAT_DIC['othertext'])
 
+
+# processing to change cms info
+@get("/changemain")
+def change():
+    for param in request.query:
+        if request.query[param] != "":
+            FORMAT_DIC[param] = request.query[param]
+    DBcon.delete_table('alerts') # clear alerts
+    cmnd = """INSERT INTO alerts VALUES ('''%s''');""" % str(json.dumps(FORMAT_DIC, ensure_ascii=False))
+    print(cmnd)
+    DBcon.query(cmnd)
+    redirect("/adm/main")
+
+
+#-------------------------------ACTIVATE PARSERS------------------------------
+    
+
+# start parsing social networks
+@get("/start_social")
+def st():
+    n = int(request.query.num)
+    t = threading.Thread(target=parse_it, args=('vk', n,))
+    t.daemon = True
+    t.start()
+    redirect("/")
+
+
+# start parse (ALL parsers)
+@get("/start_parse")
+#@tgExcCatch
+def st():              
+    maxprice = request.query.maxprice
+    DBcon.delete_table('Results')
+    for parser_name in PARSER_LIST:
+        t = threading.Thread(target = parse_it, args=(parser_name, maxprice,))    	
+        t.daemon = True
+        t.start()
+    redirect("/")
+    
+
+# start parse (ONE parser)
+@get("/special_parse")
+def spp():
+    #maxprice = int(request.query.maxprice)
+    maxprice = 15000
+    parser_name = request.query.parser_name
+    t = threading.Thread(target = parse_it, args=(parser_name, maxprice,))
+    t.daemon = True
+    t.start()
+    redirect('/')
+
+
+#---------------------------------RESULTS & STATUSES------------------------------
+
+
+# clear tables with parsing results
+@get("/clear_results")
+def clear():
+    DBcon.delete_table('Results')
+    DBcon.delete_table('Snimu')
+    #db.format()
+    redirect('/')
+
+
+# get parsed results
+@get("/res/<parser>")
+def res(parser):
+    return Parse(parser).get_results()
+
+
+# get stats for a parser
+@get("/parse_status/<parser>")
+def return_status(parser):
+    #resp.set_header("Cache-Control", 'no-store, no-cache, must-revalidate, max-age=0')
+    return Parse(parser).get_status()
+
+
+# all parsers list
+@get("/plist")
+def pl():
+    return json.dumps(PARSER_LIST)
+
+
+# download db
+@get("/db")
+def db():
+    return static_file("parseRes.db", root='.', download=True)
+
+
+#------------------------------------USER EXPERIENCE---------------------------------
+
+
+# search flats html
 @get("/search")
 def search():
     return html('search')
 
 
-
+# returns search results
 @get("/giveMeFlats")
 def give():
 
@@ -109,32 +213,28 @@ def give():
 AND room_num%s""" % room_num
         
     DBcon.query('PRAGMA case_sensitive_like = FALSE;')
-    #print(cmnd)
 
+    # offers count
     cmnd_count = "SELECT count(*) " + cmnd
+    # offers text
     cmnd = "SELECT prooflink, pics, cost, room_num, area, contacts, loc, adr, date, descr " + cmnd + " LIMIT 20 OFFSET %s;" % offset
-    print(cmnd)
+
     res = DBcon.fetch(cmnd)
     count = DBcon.fetch(cmnd_count)[0][0]
     print(count)
-    # response.set_cookie('offers_count', count)
+
     res = json.dumps(res).replace('(', '[').replace(')', ']')
 
+    # insert all flats json into JS template
     return open('./html/tableRes.html', 'r', encoding='windows-1251').read().replace('{{{cnt}}}', str(count)).replace('{{{offr}}}', res).encode('windows-1251')
 
 
 
+@get("/giveMePosts")
+def posts():
+    return DBcon.fetch("SELECT descr FROM Results WHERE fromwhere")
 
-    
-    #d = {'a': 'b', "c": ['ad', 'df']}
-    #resp =
-    #return str(open('./html/return_cookies.html', 'r').read()) % str(d)
-    #for param in request.query:
-     #   resp.set_cookie(param, request.query[param])
-        #print(request.query[param])
-    #return resp
-
-#----------------------------------------DISPLAY ON MAP----------------------------------------------
+#----------------------------------------MAP----------------------------------------------
 
 #костыль с записью в текстовый файл. NEEDES TO BE IMPROVED
 
@@ -151,127 +251,29 @@ var get_rad = 80""" % (lat, lng)
     locvar.close()
     return html("circler")
 
+
 @get("/locvar_storage.js")
 def locvar():
     return static_file('/locvar_storage.js', root='.')
 
+
+
 #----------------------------------------------------------------------------------------------------
 
 
-# main with cms
-@get("/adm/main")
-def main():
-    return template("./html/main-adm.html", version=FORMAT_DIC['version'], added=FORMAT_DIC['added'], othertext=FORMAT_DIC['othertext'])
-
-
-# processing to change cms info
-@get("/changemain")
-def change():
-    for param in request.query:
-        if request.query[param] != "":
-            FORMAT_DIC[param] = request.query[param]
-    DBcon.delete_table('alerts') # clear alerts
-    cmnd = """INSERT INTO alerts VALUES ('''%s''');""" % str(json.dumps(FORMAT_DIC, ensure_ascii=False))
-    print(cmnd)
-    DBcon.query(cmnd)
-    redirect("/adm/main")
-
-@get("/test")
-def scok():
-    response.set_cookie('lol', 'ya')
-    return '0'
-
-# start parse (ALL parsers)
-@get("/start_parse")
-#@tgExcCatch
-def st():              
-    maxprice = request.query.maxprice
-    DBcon.delete_table('Results')
-    for parser_name in PARSER_LIST:
-        t = threading.Thread(target = parse_it, args=(parser_name, maxprice,))    	
-        t.daemon = True
-        t.start()
-    redirect("/")
-    
-
-# start parse (ONE parser)
-@get("/special_parse")
-def spp():
-    #maxprice = int(request.query.maxprice)
-    maxprice = 15000
-    parser_name = request.query.parser_name
-    t = threading.Thread(target = parse_it, args=(parser_name, maxprice,))
-    t.daemon = True
-    t.start()
-    redirect('/')
-
-
-# STOP PARSING (???)
-@get("/stop_parsing")
-#@tgExcCatch
-def st():
-    raise RuntimeError('now the server will restart!')
-
-
-# get parsed results
-@get("/res/<parser>")
-def res(parser):
-    return Parse(parser).get_results()
-
-
-# get stats for a parser
-@get("/parse_status/<parser>")
-def return_status(parser):
-    #resp.set_header("Cache-Control", 'no-store, no-cache, must-revalidate, max-age=0')
-    return Parse(parser).get_status()
-
-
-# all parsers list
-@get("/plist")
-def pl():
-    return json.dumps(PARSER_LIST)
-
-
-# download db
-@get("/db")
-def db():
-    return static_file("parseRes.db", root='.', download=True)
-
-'''
-@get("/cn")
-def cn():
-    return static_file("cian.json", root='./results')'''
-
-
-# parse social networks
-@get("/start_social")
-#@tgExcCatch
-def st():
-    n = int(request.query.num)
-    t = threading.Thread(target=parse_it, args=('vk', n,))
-    t.daemon = True
-    t.start()
-    redirect("/")
-
-
-@get("/clear_results")
-def clear():
-    DBcon.delete_table('Results')
-    DBcon.delete_table('Snimu')
-    #db.format()
-    redirect('/')
-
-
+# get any image
 @get("/pics/<filename>")
 def pics(filename):
     return static_file(filename, root='./pics')
 
 
+# get stats for a metro station
 @get("/stats")
 def stats():
     return html("stats")
 
 
+# retrieve stats from the db
 @get("/giveMeStats")
 def stats():
     metro = request.query.metro
@@ -297,31 +299,22 @@ def stats():
     return template('./html/giveMeStats.html', metro=metro, room=room, cost=cost, area=area)
 
 
-'''@post("/errorBot")
-def err():
-    print(request.json)
-    return "OK"'''
-
-
-'''@get("/zerodiv")
-@tgExcCatch
-def abc(a1, a2):
-    a = 17/0
-    #print(str(a))
-    return(str(a))'''
-
+# upload db to dropbox
 @get("/sync_db")
 def snc():
     #try:
     upload_db()
-    redirect('/')
+    redirect('/system')
     #except:
      #   alertExc()
+     
 
+# styles
 @get("/css/style.css")
 def css():
     return static_file('style.css', root='./css')
-        
-# run the server
 
+
+
+# run the server
 run(host="0.0.0.0", port=os.environ.get('PORT', 5000))
