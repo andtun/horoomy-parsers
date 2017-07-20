@@ -1824,7 +1824,9 @@ def vkfeed(n):
             for i in range(0, n, 100):
                 offset = str(i)
                 adr = "https://api.vk.com/method/newsfeed.search?q=%s&count=100&access_token=732c7b09732c7b09732c7b090673709b7f7732c732c7b092a6093eafb623ad5547f142f&offset=%s" % (query, offset)
+                print(adr)
                 news = json.loads(requests.get(adr).text)['response']
+                print(news)
                 
                 for offer in news[1:]:
                     try:
