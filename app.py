@@ -233,9 +233,9 @@ AND room_num%s""" % room_num
 @get("/giveMePosts/<category>")
 def posts(category):
     if category == "sdam":
-        return DBcon.fetch("SELECT descr FROM Results WHERE fromwhere in ('vkfeed', 'novoselie', 'rentm', 'sdamsnimu', 'sdatsnyat');")
+        return json.dumps(DBcon.fetch("SELECT descr FROM Results WHERE fromwhere in ('vkfeed', 'novoselie', 'rentm', 'sdamsnimu', 'sdatsnyat');"), ensure_ascii=False)
     if category == "snimu":
-        return DBcon.fetch("SELECT descr FROM Snimu;")
+        return json.dumps(DBcon.fetch("SELECT descr FROM Snimu;"), ensure_ascii=False)
     else:
         return HTTPError(500, "Something wrong with your request to hoROOMy API :(")
 
