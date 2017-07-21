@@ -1793,10 +1793,10 @@ def vk(n):
                 try:
                     counter += 1
                     p.write_status(counter)
-                    p.append({'date': str(strftime("%Y-%m-%d %H:%M:%S", gmtime(offer['date']))), 'cost': 0, 'room_num': 0, 'area': 0, 'contacts': {'phone': '---', 'vk': getVkId(offer)}, 'pics': picsarr(offer), 'descr': set_priority(offer['text']), 'metro': ['---'], 'url': "https://vk.com/wall-%s_%s" % (c, str(offer['id'])), 'loc': ["---"], 'adr': 'no_adress'})
+                    p.append({'date': str(strftime("%Y-%m-%d %H:%M:%S", gmtime(offer['date']))), 'cost': 0, 'room_num': 0, 'area': 0, 'contacts': {'phone': '---', 'vk': getVkId(offer)}, 'pics': picsarr(offer), 'descr': set_priority(offer['text']), 'metro': ['---'], 'url': "https://vk.com/wall-%s_%s" % (c, str(offer['id'])), 'loc': "-.-", 'adr': 'no_adress'}, useHash=True)
                 except Exception as e:
                     alertExc()
-                    pass
+                    #pass
         p.add_date()
         del p
 
@@ -1811,7 +1811,7 @@ def vk(n):
 
 #=================================SEARCH VK FEED====================================
 
-SEARCH_PARS = ["квартир", "комнат", "покомнатно", "койк"]
+SEARCH_PARS = ["квартиру", "комнату", "покомнатно", "койко место"]
 WISHES = ["сдам ", "сниму "]
 
 def vkfeed(n):
@@ -1826,14 +1826,14 @@ def vkfeed(n):
                 adr = "https://api.vk.com/method/newsfeed.search?q=%s&count=100&access_token=732c7b09732c7b09732c7b090673709b7f7732c732c7b092a6093eafb623ad5547f142f&offset=%s" % (query, offset)
                 print(adr)
                 news = json.loads(requests.get(adr).text)['response']
-                print(news)
+                #print(news)
                 
                 for offer in news[1:]:
                     try:
                         counter += 1
                         p.write_status(counter)
                         if wish == 'сдам ':
-                            p.append({'date': str(strftime("%Y-%m-%d %H:%M:%S", gmtime(offer['date']))), 'cost': 0, 'room_num': 0, 'area': 0, 'contacts': {'phone': '---', 'vk': getVkId(offer)}, 'pics': picsarr(offer), 'descr': set_priority(offer['text']), 'metro': ['---'], 'url': "https://vk.com/wall%s_%s" % (str(offer['owner_id']), str(offer['id'])), 'loc': "-.-", 'adr': 'no_adress'})
+                            p.append({'date': str(strftime("%Y-%m-%d %H:%M:%S", gmtime(offer['date']))), 'cost': 0, 'room_num': 0, 'area': 0, 'contacts': {'phone': '---', 'vk': getVkId(offer)}, 'pics': picsarr(offer), 'descr': set_priority(offer['text']), 'metro': ['---'], 'url': "https://vk.com/wall%s_%s" % (str(offer['owner_id']), str(offer['id'])), 'loc': "-.-", 'adr': 'no_adress'}, useHash=True)
                         else:
                             p.append_snimu({'date': str(strftime("%Y-%m-%d %H:%M:%S", gmtime(offer['date']))), 'cost': 0, 'room_num': 0, 'area': 0, 'contacts': {'phone': '---', 'vk': getVkId(offer)}, 'pics': picsarr(offer), 'descr': set_priority(offer['text']), 'metro': ['---'], 'url': "https://vk.com/wall%s_%s" % (str(offer['owner_id']), str(offer['id'])), 'loc': "-.-", 'adr': 'no_adress'})
                            
@@ -1848,7 +1848,6 @@ def vkfeed(n):
 
 #@tgExcCatch
 def parse_it(name, maxprice):
-    #print("!!!!!!!!!!!!!!!!!!!!!!!!!", name)
     if name == 'cian':
         cian(maxprice)
     elif name == 'realEstate':
@@ -1867,12 +1866,13 @@ def parse_it(name, maxprice):
     elif name == 'irr':
         irr(maxprice)
         irr_room()
-    elif name == 'vk':
+    elif name == 'vk':    # maxprice stands for posts number
         vkfeed(maxprice)
         vk(maxprice)
 
     upload_db()
 
+
 if __name__ == "__main__":
-    irr(35000)
+    vk(100)
 

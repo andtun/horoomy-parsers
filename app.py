@@ -104,7 +104,7 @@ def st():
 #@tgExcCatch
 def st():              
     maxprice = request.query.maxprice
-    DBcon.delete_table('Results')
+    #DBcon.delete_table('Results')
     for parser_name in PARSER_LIST:
         t = threading.Thread(target = parse_it, args=(parser_name, maxprice,))    	
         t.daemon = True

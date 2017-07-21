@@ -12,17 +12,18 @@
   
 <script type="text/javascript">
 
-
+///always HTTPS
   if (window.location.protocol == "http:") {
     var mainurl = window.location.href.substr(5);
     window.location = "https:" + mainurl; }
   
 
-var count = {{{cnt}}};
+var count = {{{cnt}}};  /// count -- количество объявлений (его даёт сервер)
 count = Math.trunc(count/20) + 1
-var offers = {{{offr}}};
+var offers = {{{offr}}};  /// offers -- json с инфой по квартирам
 
 
+/// получаем параметры из адресной строки браузера
 function getQueryParameter(name) {
     url = window.location.href;
     name = name.replace(/[\[\]]/g, "\\$&");

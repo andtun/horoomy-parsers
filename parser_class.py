@@ -9,7 +9,7 @@ from botApi import alertExc, alertBot
 
 
 # when we start app.py
-#sync db
+# sync db
 BackuppedFile('parseRes.db').sync()
 
 
@@ -86,13 +86,14 @@ class Parse:
 
     
     # appending to db (like to #a list)
-    def append(self, data):       # working with db
+    def append(self, data, useHash=False):       # working with db
 
         def get_id(data):
             unique_id = str(data['cost']) + str(data['room_num']) + str(data['area']) + str(data['loc'])
             return unique_id
 
         if data['adr'] == None:
+            print("""-----REMOVED FOR NO ADDR GIVEN -----""")
             return 0
 
         
@@ -138,9 +139,14 @@ class Parse:
                 print("YANDEXADRERR")
 
 
-        hsh = get_id(data)  # unique id for the descr
+        # unique id for the descr
+        if useHash: 
+            hsh = hash(data['descr'])
+        else:
+            hsh = get_id(data)
 
-        cmnd = "DELETE FROM Results WHERE hash='%s';" % hsh     # delete duplicates
+        # delete duplicates
+        cmnd = "DELETE FROM Results WHERE hash='%s';" % hsh
         self.db.query(cmnd)
         
         # forming db command
