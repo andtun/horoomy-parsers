@@ -232,13 +232,20 @@ AND room_num%s""" % room_num
 
 @get("/giveMePosts/<category>")
 def posts(category):
-    if category == "sdam":
-        return json.dumps(DBcon.fetch("SELECT descr FROM Results WHERE fromwhere in ('vkfeed', 'novoselie', 'rentm', 'sdamsnimu', 'sdatsnyat');"), ensure_ascii=False)
-    if category == "snimu":
-        return json.dumps(DBcon.fetch("SELECT descr FROM Snimu;"), ensure_ascii=False)
+    if 'num' in request.query:
+        cmnd = " LIMIT " + str(request.query['num']) + ";"
     else:
-        return HTTPError(500, "Something wrong with your request to hoROOMy API :(")
+        cmnd = ";"
+        
+    if category == "sdam":
+        fetch_cmnd = "SELECT descr FROM Results WHERE fromwhere in ('vkfeed', 'novoselie', 'rentm', 'sdamsnimu', 'sdatsnyat')" + cmnd
+    else:
+        if category != "snimu":
+            return HTTPError(500, "Wrong request to hoROOMy parsers API")
+        fetch_cmnd = "SELECT descr FROM Snimu"+cmnd
 
+    return json.dumps(DBcon.fetch(fetch_cmnd), ensure_ascii=False)
+        
 #----------------------------------------MAP----------------------------------------------
 
 #костыль с записью в текстовый файл. NEEDES TO BE IMPROVED

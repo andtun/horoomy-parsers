@@ -217,6 +217,4 @@ INSERT INTO Results VALUES (
 
 
 
-
-
     
