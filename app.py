@@ -230,9 +230,14 @@ AND room_num%s""" % room_num
 
 
 
-@get("/giveMePosts")
-def posts():
-    return DBcon.fetch("SELECT descr FROM Results WHERE fromwhere")
+@get("/giveMePosts/<category>")
+def posts(category):
+    if category == "sdam":
+        return DBcon.fetch("SELECT descr FROM Results WHERE fromwhere in ('vkfeed', 'novoselie', 'rentm', 'sdamsnimu', 'sdatsnyat');")
+    if category == "snimu":
+        return DBcon.fetch("SELECT descr FROM Snimu WHERE fromwhere in ('vkfeed', 'novoselie', 'rentm', 'sdamsnimu', 'sdatsnyat');")
+    else:
+        return HTTPError(228, "БЕШКИ СОСУТ")
 
 #----------------------------------------MAP----------------------------------------------
 
