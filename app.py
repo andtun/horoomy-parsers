@@ -235,9 +235,9 @@ def posts(category):
     if category == "sdam":
         return DBcon.fetch("SELECT descr FROM Results WHERE fromwhere in ('vkfeed', 'novoselie', 'rentm', 'sdamsnimu', 'sdatsnyat');")
     if category == "snimu":
-        return DBcon.fetch("SELECT descr FROM Snimu WHERE fromwhere in ('vkfeed', 'novoselie', 'rentm', 'sdamsnimu', 'sdatsnyat');")
+        return DBcon.fetch("SELECT descr FROM Snimu;")
     else:
-        return HTTPError(228, "БЕШКИ СОСУТ")
+        return HTTPError(500, "Something wrong with your request to hoROOMy API :(")
 
 #----------------------------------------MAP----------------------------------------------
 
