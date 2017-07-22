@@ -68,13 +68,13 @@ def ss():
 
 
 # html with version-control cms
-@get("/adm/main")
+@get("/system/edit")
 def main():
     return template("./html/main-adm.html", version=FORMAT_DIC['version'], added=FORMAT_DIC['added'], othertext=FORMAT_DIC['othertext'])
 
 
 # processing to change cms info
-@get("/changemain")
+@get("/system/changemain")
 def change():
     for param in request.query:
         if request.query[param] != "":
@@ -90,7 +90,7 @@ def change():
     
 
 # start parsing social networks
-@get("/start_social")
+@get("/parsers/start_social")
 def st():
     n = int(request.query.num)
     t = threading.Thread(target=parse_it, args=('vk', n,))
@@ -100,7 +100,7 @@ def st():
 
 
 # start parse (ALL parsers)
-@get("/start_parse")
+@get("/parsers/start_parse")
 #@tgExcCatch
 def st():              
     maxprice = request.query.maxprice
@@ -113,7 +113,7 @@ def st():
     
 
 # start parse (ONE parser)
-@get("/special_parse")
+@get("/parsers/special_parse")
 def spp():
     #maxprice = int(request.query.maxprice)
     maxprice = 15000
@@ -128,7 +128,7 @@ def spp():
 
 
 # clear tables with parsing results
-@get("/clear_results")
+@get("/results/clear")
 def clear():
     DBcon.delete_table('Results')
     DBcon.delete_table('Snimu')
@@ -137,28 +137,28 @@ def clear():
 
 
 # get parsed results
-@get("/res/<parser>")
+@get("/results/giveMeResults/<parser>")
 def res(parser):
     return Parse(parser).get_results()
 
 
+# download db
+@get("/results/db_download")
+def db():
+    return static_file("parseRes.db", root='.', download=True)
+
+
 # get stats for a parser
-@get("/parse_status/<parser>")
+@get("/statuses/giveMeStatus/<parser>")
 def return_status(parser):
     #resp.set_header("Cache-Control", 'no-store, no-cache, must-revalidate, max-age=0')
     return Parse(parser).get_status()
 
 
 # all parsers list
-@get("/plist")
+@get("/statuses/plist")
 def pl():
     return json.dumps(PARSER_LIST)
-
-
-# download db
-@get("/db")
-def db():
-    return static_file("parseRes.db", root='.', download=True)
 
 
 #------------------------------------USER EXPERIENCE---------------------------------
@@ -219,20 +219,23 @@ AND room_num%s""" % room_num
     # offers text
     cmnd = "SELECT prooflink, pics, cost, room_num, area, contacts, loc, adr, date, descr " + cmnd + " LIMIT 20 OFFSET %s;" % offset
 
+    # fetch offers
     res = DBcon.fetch(cmnd)
     count = DBcon.fetch(cmnd_count)[0][0]
     print(count)
 
-    res = json.dumps(res).replace('(', '[').replace(')', ']')
+    res = json.dumps(res)
 
     # insert all flats json into JS template
     return open('./html/tableRes.html', 'r', encoding='windows-1251').read().replace('{{{cnt}}}', str(count)).replace('{{{offr}}}', res).encode('windows-1251')
 
 
+#-----------------------------------VK POSTS API-----------------------------------------
+
 
 @get("/giveMePosts/<category>")
 def posts(category):
-    if 'num' in request.query:
+    if 'num' in request.query and num != "":
         cmnd = " LIMIT " + str(request.query['num']) + ";"
     else:
         cmnd = ";"
@@ -250,7 +253,7 @@ def posts(category):
 
 #костыль с записью в текстовый файл. NEEDES TO BE IMPROVED
 
-@get("/geolocate")
+@get("/map/geolocate")
 def geo():
     if request.query['loc'] == "YANDEXLOCERR":
         return '<h2>К сожалению, мы не можем найти что-либо по указанному адресу :( </h2>'
@@ -264,7 +267,7 @@ var get_rad = 80""" % (lat, lng)
     return html("circler")
 
 
-@get("/locvar_storage.js")
+@get("/map/locvar_storage.js")
 def locvar():
     return static_file('/locvar_storage.js', root='.')
 

@@ -10,7 +10,7 @@ from botApi import alertExc, alertBot
 
 # when we start app.py
 # sync db
-BackuppedFile('parseRes.db').sync()
+#BackuppedFile('parseRes.db').sync()
 
 
 #------------------------------------------------------
@@ -37,8 +37,6 @@ def evolve(a):
 # for optimizating work of all parsers
 class Parse:
     name = ""
-    #status_key = ""
-    #results_file = ""
     db = None
 
 
