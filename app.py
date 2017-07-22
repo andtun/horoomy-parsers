@@ -8,7 +8,7 @@ from parseAPI import parse_it
 from bottle import *
 from parser_class import Parse
 from database import DataBase, DBcon
-from botApi import tgExcCatch, alertExc
+from botAPI import tgExcCatch, alertExc
 from driveAPI import upload_db
 
 
@@ -229,8 +229,9 @@ AND room_num%s""" % room_num
 
 @get("/giveMePosts/<category>")
 def posts(category):
-    if 'num' in request.query and num != "":
-        cmnd = " LIMIT " + str(request.query['num']) + ";"
+    if 'num' in request.query:
+        if request.query['num'] != "":
+            cmnd = " LIMIT " + str(request.query['num']) + ";"
     else:
         cmnd = ";"
         

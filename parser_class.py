@@ -5,7 +5,7 @@ import requests
 from database import DataBase, DBcon
 from time import gmtime, strftime
 from driveAPI import BackuppedFile
-from botApi import alertExc, alertBot
+from botAPI import alertExc, alertBot
 
 
 # when we start app.py

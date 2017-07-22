@@ -3,7 +3,7 @@
 import os
 import dropbox
 from dropbox.files import WriteMode
-from botApi import alertBot
+from botAPI import alertBot
 
 REMOTE_ROOT = '/'
 TOKEN = 'RooTI79s2tAAAAAAAAAAL-6ZAv5-hU0vsILShL8XRDbRiQXgXpReUYd9p09b6l33'
