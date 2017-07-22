@@ -128,7 +128,7 @@ def spp():
 
 
 # clear tables with parsing results
-@get("/results/clear")
+@get("/results/clearAll")
 def clear():
     DBcon.delete_table('Results')
     DBcon.delete_table('Snimu')
@@ -140,12 +140,6 @@ def clear():
 @get("/results/giveMeResults/<parser>")
 def res(parser):
     return Parse(parser).get_results()
-
-
-# download db
-@get("/results/db_download")
-def db():
-    return static_file("parseRes.db", root='.', download=True)
 
 
 # get stats for a parser
@@ -273,13 +267,26 @@ def locvar():
 
 
 
-#----------------------------------------------------------------------------------------------------
+#----------------------------------------------DataBASE----------------------------------------------------
 
 
-# get any image
-@get("/pics/<filename>")
-def pics(filename):
-    return static_file(filename, root='./pics')
+# download db
+@get("/db/download")
+def db():
+    return static_file("parseRes.db", root='.', download=True)
+
+
+# upload db to dropbox
+@get("/db/sync")
+def snc():
+    #try:
+    upload_db()
+    redirect('/system')
+    #except:
+     #   alertExc()
+
+
+#---------------------------------------STATISTICS SERVICE-----------------------------------------
 
 
 # get stats for a metro station
@@ -289,7 +296,7 @@ def stats():
 
 
 # retrieve stats from the db
-@get("/giveMeStats")
+@get("/stats/giveMeStats")
 def stats():
     metro = request.query.metro
 
@@ -314,15 +321,15 @@ def stats():
     return template('./html/giveMeStats.html', metro=metro, room=room, cost=cost, area=area)
 
 
-# upload db to dropbox
-@get("/sync_db")
-def snc():
-    #try:
-    upload_db()
-    redirect('/system')
-    #except:
-     #   alertExc()
+
+#----------------------------------------------STUFF--------------------------------------------
+
      
+# get any image
+@get("/pics/<filename>")
+def pics(filename):
+    return static_file(filename, root='./pics')
+
 
 # styles
 @get("/css/style.css")
@@ -330,6 +337,7 @@ def css():
     return static_file('style.css', root='./css')
 
 
+#------------------------------------------------------------------------------------------------
 
 # run the server
 run(host="0.0.0.0", port=os.environ.get('PORT', 5000))
