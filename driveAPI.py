@@ -17,7 +17,6 @@ def upload_db():
 class BackuppedFile:
     filename = ''
     DBXfilename = ''
-    fileBytes = None
     #dbx = None
 
     def __init__(self, filename):
@@ -26,11 +25,10 @@ class BackuppedFile:
         if '/' in fname:
             fname = fname[fname.rfind('/')+1:]
         self.DBXfilename = REMOTE_ROOT+fname
-        self.fileBytes = open(filename, 'rb').read()
         #self.dbx = dropbox.Dropbox(TOKEN)
 
     def upload(self):
-        DBX.files_upload(self.fileBytes, self.DBXfilename, mode=WriteMode('overwrite'))
+        DBX.files_upload(open(self.filename, 'rb').read(), self.DBXfilename, mode=WriteMode('overwrite'))
         alertBot.sendMessage('uploaded db'+self.DBXfilename)
         
     def sync(self):

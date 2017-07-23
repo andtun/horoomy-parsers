@@ -3,7 +3,6 @@
 import math
 import json
 import threading
-from multiprocessing import Process
 from parseAPI import parse_it
 from bottle import *
 from parser_class import Parse
@@ -92,7 +91,10 @@ def change():
 # start parsing social networks
 @get("/parsers/start_social")
 def st():
-    n = int(request.query.num)
+    if 'num' in request.query:
+        n = int(request.query['num'])
+    else:
+        n = 100
     t = threading.Thread(target=parse_it, args=('vk', n,))
     t.daemon = True
     t.start()
@@ -102,8 +104,11 @@ def st():
 # start parse (ALL parsers)
 @get("/parsers/start_parse")
 #@tgExcCatch
-def st():              
-    maxprice = request.query.maxprice
+def st():
+    if "maxprice" in request.query:
+        maxprice = request.query['maxprice']
+    else:
+        maxprice = 55000
     #DBcon.delete_table('Results')
     for parser_name in PARSER_LIST:
         t = threading.Thread(target = parse_it, args=(parser_name, maxprice,))    	
@@ -116,8 +121,11 @@ def st():
 @get("/parsers/special_parse")
 def spp():
     #maxprice = int(request.query.maxprice)
-    maxprice = 15000
     parser_name = request.query.parser_name
+    if parser_name == 'vk':
+        maxprice = 100
+    else:
+        maxprice = 15000
     t = threading.Thread(target = parse_it, args=(parser_name, maxprice,))
     t.daemon = True
     t.start()
@@ -220,6 +228,12 @@ AND room_num%s""" % room_num
 
     res = json.dumps(res)
 
+    if "html" in q:
+        if q['html'] == "off":
+            return res
+        if q['html'] == "count":
+            return count
+        
     # insert all flats json into JS template
     return open('./html/tableRes.html', 'r', encoding='windows-1251').read().replace('{{{cnt}}}', str(count)).replace('{{{offr}}}', res).encode('windows-1251')
 
@@ -333,9 +347,13 @@ def pics(filename):
 
 
 # styles
-@get("/css/style.css")
-def css():
-    return static_file('style.css', root='./css')
+@get("/css/<filename>")
+def css(filename):
+    return static_file(filename, root='./css')
+
+@get("/ptest")
+def t():
+    return "testPassed"
 
 
 #------------------------------------------------------------------------------------------------
